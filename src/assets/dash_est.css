@@ -1,0 +1,149 @@
+.class_div_coluna {
+    margin: 20px 0;
+    background-color: #21242D;
+    height: 58vh;
+    border-radius: 20px;
+    padding: 10px;
+}
+
+#id_linha_engajamento {
+    margin-bottom: 10px;
+}
+
+
+.class_div_primeira_linha_primeira_coluna_label_dashboard {
+    margin: 20px 0;
+    background-color: #21242D;
+    height: 8vh;
+    border-radius: 20px;
+}
+
+.class_titulo_primeira_linha,
+.class_input_select {
+    text-align: center;
+}
+
+#id_select_assunto,
+#id_titulo_comparacao_video,
+#id_input_desempenho,
+#id_titulo_video_publicado,
+#id_titulo_categoria_populares,
+#id_titulo_categoria_populares_trends,
+#id_titulo_canais_populares_trends,
+#id_titulo_desempenho_categoria,
+#id_titulo_desempenho_categoria_dia,
+#id_titulo_engajamento_dia,
+#id_titulo_engajamento_video,
+.class_inputs_desempenho,
+.class_titulo_grafico {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.Select-value {
+    background-color: black !important;
+    color: white !important;
+
+}
+
+
+.Select-menu-outer {
+    background-color: black;
+    color: white;
+}
+
+.custom-select .custom-select-toggle::after {
+    color: white;
+}
+
+.class_inputs_desempenho {
+    margin: 10px 10px;
+    width: 50vh;
+}
+
+#id_div_grafico_top_dez,
+#id_div_grafico_layout_top_dez,
+#id_div_grafico_canais_populares,
+#id_main_canais_populares,
+#id_div_graph_categoria_video_populares,
+#id_div_grafico_engajamento_canal,
+#id_div_grafico_engajamento_video {
+    max-height: 380px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+
+
+#id_div_external_tabela_top_dez_engaj {
+    max-height: 380px;
+    overflow-y: hidden;
+    overflow-x: scroll;
+}
+
+
+#id_div_tabela_popularidade_titulo {
+    margin-bottom: 20px;
+}
+
+.class_titulo_grafico_tabela {
+    margin-bottom: 60px;
+    text-align: center;
+
+}
+
+.class_form_group_data {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px;
+
+}
+
+#id_input_data_top_dez_engaj_dia {
+    margin-left: 10px;
+}
+
+/* .CalendarMonth,
+.CalendarMonth_table,
+.DayPicker_transitionContainer,
+.CalendarDay,
+.DayPickerNavigation_button {
+    background-color: black;
+    color: white;
+} */
+
+
+.CalendarMonth,
+.CalendarMonth_table,
+.DayPicker_transitionContainer {
+    background-color: black;
+
+}
+
+
+
+.DateInput_input {
+    font-weight: 200;
+    font-size: 19px;
+    line-height: 24px;
+    color: white;
+    background-color: black;
+    width: 100%;
+    padding: 11px 11px 9px;
+    border: 0;
+    border-top: 0;
+    border-right: 0;
+    border-bottom: 2px solid transparent;
+    border-left: 0;
+    border-radius: 0;
+}
+
+.class_select_categoria_canais_populares,
+.class_select_categoria_canal_dia,
+.class_select_engajamento_canal,
+#id_input_desempenho_categoria_dia,
+#id_select_engajamento_video {
+    background-color: #21242D;
+    color: white;
+}
