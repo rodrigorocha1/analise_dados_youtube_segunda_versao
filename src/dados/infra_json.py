@@ -1,7 +1,7 @@
 
 import json
-from src.dados.infra_dados import InfraDados
 import os
+from src.dados.infra_dados import InfraDados
 
 
 class InfraJson(InfraDados):
