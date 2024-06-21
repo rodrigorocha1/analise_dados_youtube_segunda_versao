@@ -1,15 +1,16 @@
 try:
     import sys
     import os
-    sys.path.insert(0, os.path.abspath(os.curdir))
-except ModuleNotFoundError:
+    sys.path.append(os.path.abspath(
+        os.path.join(os.path.dirname(__file__), '..')))
+except:
     pass
 import pendulum
 from airflow.operators.empty import EmptyOperator
 from airflow.models import DAG
 from airflow.utils.task_group import TaskGroup
 
-from dags.src.dados.infra_json import InfraJson
+from src.dados.infra_json import InfraJson
 from src.dados.infra_pickle import InfraPicke
 from operators.youtube_busca_operator import YoutubeBuscaOperator
 from operators.youtube_busca_videos_operator import YoutubeBuscaVideoOperator
@@ -63,9 +64,9 @@ with TaskGroup('task_youtube_api_historico_pesquisa', dag=dag) as tg1:
             ' ', '_').lower().replace('|', '_')
         termo_assunto_pasta = termo_assunto.replace(
             ' ', '_').replace('|', '_').replace('ã', 'a').replace('ç', 'c')
+        id_task = f'id_youtube_api_historico_pesquisa_{id_termo_assunto}',
         extracao_api_youtube_historico_pesquisa = YoutubeBuscaOperator(
-            task_id=f'id_youtube_api_historico_pesquisa_{
-                id_termo_assunto}',
+            task_id=id_task,
             data_inicio=data_hora_busca,
             ordem_extracao=YoutubeBuscaPesquisaHook(
                 data_inicio=data_hora_busca,
