@@ -1,13 +1,12 @@
 
 import json
 from src.dados.infra_dados import InfraDados
+import os
 
 
 class InfraJson(InfraDados):
-    def __init__(self, diretorio_datalake: str, termo_assunto: str,
-                 path_extracao: str, metrica: str, nome_arquivo: str) -> None:
-        super().__init__(diretorio_datalake, termo_assunto,
-                         path_extracao, metrica, nome_arquivo)
+    def __init__(self, camada_datalake: str, assunto: str, pasta: str, metrica: str, nome_arquivo: str) -> None:
+        super().__init__(camada_datalake, assunto, pasta, metrica, nome_arquivo)
 
     def salvar_dados(self, **kwargs):
         """Método para guardar json
