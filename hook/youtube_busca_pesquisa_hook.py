@@ -27,8 +27,6 @@ class YoutubeBuscaPesquisaHook(YoutubeHook):
                 'pageToken': ''
             }
         ]
-        print("===============================")
-        logging.info(params)
 
         response = self._executar_paginacao(
             url=url, session=session, params=params)
