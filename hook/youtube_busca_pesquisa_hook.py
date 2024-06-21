@@ -1,15 +1,6 @@
 from hook.youtube_hook import YoutubeHook
 from src.dados.iinfra_dados import IInfraDados
 import variaveis.variaveis as v
-import logging
-try:
-    import sys
-    import os
-    sys.path.append(os.path.abspath(
-        os.path.join(os.path.dirname(__file__), '..')))
-
-except ModuleNotFoundError:
-    pass
 
 
 class YoutubeBuscaPesquisaHook(YoutubeHook):

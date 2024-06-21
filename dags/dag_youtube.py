@@ -75,19 +75,15 @@ with TaskGroup('task_youtube_api_historico_pesquisa', dag=dag) as tg1:
             termo_consulta=termo_assunto,
             extracao_dados=(
                 InfraJson(
-                    diretorio_datalake='bronze',
-                    
-
-
-                    # diretorio_datalake='bronze',
-                    # termo_assunto=f'assunto_{termo_assunto_pasta}',
-                    # path_extracao=data,
-                    # metrica='requisicao_busca',
-                    # nome_arquivo='req_busca.json'
+                    camada_datalake='bronze',
+                    assunto=termo_assunto,
+                    pasta=f'estracao_dia_{data}',
+                    metrica='historico_pesquisa',
+                    nome_arquivo='historico_pesquisa.json',
                 ),
                 InfraPicke(
-                    diretorio_datalake='bronze',
-                    termo_assunto=f'assunto_{termo_assunto_pasta}',
+                    camada_datalake='bronze',
+                    assunto=f'assunto_{termo_assunto_pasta}',
                     path_extracao='id_video',
                     metrica=None,
                     nome_arquivo='id_video.pkl'

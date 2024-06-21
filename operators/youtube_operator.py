@@ -46,7 +46,6 @@ class YoutubeOperator(BaseOperator, ABC):
         self.termo_consulta = termo_consulta
         self.extracao_dados = extracao_dados
         self.dados_youtube = DadosYoutube()
-        print(data_inicio)
         super().__init__(**kwargs)
 
     @abstractmethod
