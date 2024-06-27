@@ -54,3 +54,13 @@ class DadosYoutube():
         for comment in req['items']:
             lista_id_comentarios_encandeados.append(comment['id'])
         return lista_id_comentarios_encandeados
+
+    @classmethod
+    def obter_lista_canais_brasileiros(cls, req: Dict) -> List[str]:
+        lista_id_canais = []
+        # abrir lista canais salvos
+        # fazer for da requisicao:
+        # verificar se o id canal já está no arquivo
+        # se não tiver, fazer a consulta na API
+        # e retornar com a lista
+        pass

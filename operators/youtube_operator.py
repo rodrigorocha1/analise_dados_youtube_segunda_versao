@@ -34,8 +34,8 @@ class YoutubeOperator(BaseOperator, ABC):
 
         Args:
             ordem_extracao (str): ordem de extracao, recebe um Hook
-            extracao_dados (Tuple[IInfraDados]): tipo de carregamento de dados
-
+            extracao_dados (Tuple[IInfraDados]): Tupla tipo de carregamento de dados
+            extracao_unica (IInfraDados, optional): tipo de carregamento de dados. Defaults to None.
             termo_pesquisa (str, optional): termo de busca . Defaults to None.
             data_inicio (str, optional): data de ínicio da pesquisa. Defaults to None.
         """
