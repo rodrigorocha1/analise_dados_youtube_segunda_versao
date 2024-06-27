@@ -17,7 +17,7 @@ class YoutubeOperator(BaseOperator, ABC):
         'ordem_extracao',
         'extracao_dados',
         'extracao_unica',
-        'termo_consulta',
+        'termo_pesquisa',
         'data_inicio'
     ]
 
@@ -26,24 +26,24 @@ class YoutubeOperator(BaseOperator, ABC):
             ordem_extracao: YoutubeHook,
             extracao_dados: Tuple[IInfraDados],
             extracao_unica: IInfraDados = None,
-            termo_consulta: str = None,
+            termo_pesquisa: str = None,
             data_inicio: str = None,
             **kwargs,
     ):
         """init para youtube operator
 
         Args:
-            ordem_extracao (str): ordem de extracao, recebe um rook
+            ordem_extracao (str): ordem de extracao, recebe um Hook
             extracao_dados (Tuple[IInfraDados]): tipo de carregamento de dados
 
-            termo_consulta (str, optional): termo de busca . Defaults to None.
+            termo_pesquisa (str, optional): termo de busca . Defaults to None.
             data_inicio (str, optional): data de ínicio da pesquisa. Defaults to None.
         """
         self.ordem_extracao = ordem_extracao
 
         self.data_inicio = data_inicio
         self.extracao_unica = extracao_unica
-        self.termo_consulta = termo_consulta
+        self.termo_pesquisa = termo_pesquisa
         self.extracao_dados = extracao_dados
         self.dados_youtube = DadosYoutube()
         super().__init__(**kwargs)

@@ -10,27 +10,22 @@ class YoutubeBuscaOperator(YoutubeOperator):
         'ordem_extracao',
         'extracao_dados',
         'extracao_unica',
-        'termo_consulta',
+        'termo_pesquisa',
         'data_inicio'
     ]
 
-    def __init__(
-        self,
-            ordem_extracao: YoutubeHook,
-            extracao_dados: Tuple[IInfraDados],
-            extracao_unica: IInfraDados = None,
-            termo_consulta: str = None,
-            data_inicio: str = None,
-            **kwargs
-    ):
-        super().__init__(
-            ordem_extracao=ordem_extracao,
-            extracao_dados=extracao_dados,
-            extracao_unica=extracao_unica,
-            termo_consulta=termo_consulta,
-            data_inicio=data_inicio,
-            **kwargs
-        )
+    def __init__(self, ordem_extracao: YoutubeHook, extracao_dados: Tuple[IInfraDados], extracao_unica: IInfraDados = None, termo_pesquisa: str = None, data_inicio: str = None, **kwargs):
+        """init para youtube Busca
+
+        Args:
+            ordem_extracao (str): ordem de extracao, recebe um Hook
+            extracao_dados (Tuple[IInfraDados]): tipo de carregamento de dados
+
+            termo_pesquisa (str, optional): termo de busca . Defaults to None.
+            data_inicio (str, optional): data de ínicio da pesquisa. Defaults to None.
+        """
+        super().__init__(ordem_extracao, extracao_dados,
+                         extracao_unica, termo_pesquisa, data_inicio, **kwargs)
 
     def gravar_dados(self, req: Dict):
         if len(req['items']) > 0:

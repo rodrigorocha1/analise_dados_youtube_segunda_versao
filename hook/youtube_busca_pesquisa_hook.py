@@ -5,12 +5,30 @@ import variaveis.variaveis as v
 
 class YoutubeBuscaPesquisaHook(YoutubeHook):
     def __init__(self, data_inicio: str, consulta: str = None, conn_id: str = None, carregar_dados: IInfraDados = None) -> None:
+        """Classe (Dag) para buscar os resultados de pesquisas
+
+        Args:
+            data_inicio (str): data de inicio
+            consulta (str, optional): termo de busc. Defaults to None.
+            conn_id (str, optional): id da dag. Defaults to None.
+            carregar_dados (IInfraDados, optional): Carregar o objeto de arquivo que bai ser shamafo. Defaults to None.
+        """
         super().__init__(data_inicio, consulta, conn_id, carregar_dados)
 
-    def _criar_url(self):
+    def _criar_url(self) -> str:
+        """Retorna a url
+
+        Returns:
+            str: _description_
+        """
         return self._URL + '/search/'
 
     def run(self):
+        """Método para rodar a dag
+
+        Returns:
+            _type_: _description_
+        """
         session = self.get_conn()
 
         url = self._criar_url()

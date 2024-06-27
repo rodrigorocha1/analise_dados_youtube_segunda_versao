@@ -27,6 +27,15 @@ class YoutubeBuscaVideoOperator(YoutubeOperator):
             data_inicio: str = None,
             **kwargs
     ):
+        """_summary_
+
+        Args:
+            ordem_extracao (YoutubeHook): Recebe um hook
+            extracao_dados (Tuple[IInfraDados]): Uma tupla para ler os arquivos 
+            extracao_unica (IInfraDados, optional): Recebe um objeto para gravar os dados. Defaults to None.
+            termo_consulta (str, optional): termo de consulta. Defaults to None.
+            data_inicio (str, optional): data de ínicio. Defaults to None.
+        """
         super().__init__(
             ordem_extracao=ordem_extracao,
             extracao_dados=extracao_dados,
@@ -37,10 +46,21 @@ class YoutubeBuscaVideoOperator(YoutubeOperator):
         )
 
     def gravar_dados(self, req: Dict):
+        """Método para gravar os dados
+
+        Args:
+            req (Dict): recebe o json da API do youtube
+        """
+
         if len(req['items']) > 0:
             self.extracao_unica.salvar_dados(req=req)
 
     def execute(self, context):
+        """_summary_
+
+        Args:
+            context (_type_): _description_
+        """
         try:
             for json_response in self.ordem_extracao.run():
                 self.gravar_dados(json_response)
