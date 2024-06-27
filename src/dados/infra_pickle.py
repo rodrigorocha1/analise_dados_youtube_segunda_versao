@@ -14,7 +14,7 @@ class InfraPicke(InfraDados):
         """
 
         if not os.path.exists(self._diretorio_completo):
-            os.makedirs(self._diretorio_completo)
+            os.makedirs(self._diretorio_completo, exist_ok=True)
             var = kwargs['lista']
         else:
             try:

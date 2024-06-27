@@ -13,7 +13,7 @@ class InfraJson(InfraDados):
         """
 
         if not os.path.exists(self._diretorio_completo):
-            os.makedirs(self._diretorio_completo)
+            os.makedirs(self._diretorio_completo, exist_ok=True)
 
         with open(os.path.join(self._diretorio_completo, self._nome_arquivo), 'a') as arquivo_json:
             json.dump(kwargs['req'],  arquivo_json, ensure_ascii=False)
