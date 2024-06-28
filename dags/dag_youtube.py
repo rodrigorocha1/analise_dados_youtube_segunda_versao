@@ -90,7 +90,7 @@ with TaskGroup('task_youtube_api_historico_pesquisa', dag=dag) as tg1:
                     assunto=id_termo_assunto,
                     pasta=None,
                     metrica=None,
-                    nome_arquivo='id_canais.pkl'
+                    nome_arquivo='id_canais_brasileiros.pkl'
                 )
             ),
             termo_pesquisa=termo_assunto
