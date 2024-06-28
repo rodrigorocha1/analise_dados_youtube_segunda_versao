@@ -30,6 +30,7 @@ class InfraDados(IInfraDados):
         if self.__metrica is not None:
             self._diretorio_completo = os.path.join(
                 self.__caminho_base,
+                'data',
                 self.__camada_datalake,
                 self.__assunto,
                 self.__pasta,
@@ -40,6 +41,7 @@ class InfraDados(IInfraDados):
         else:
             self._caminho_completo = os.path.join(
                 self.__caminho_base,
+                'data',
                 self.__camada_datalake,
                 self.__assunto,
                 self._nome_arquivo

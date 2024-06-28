@@ -47,8 +47,12 @@ def checar_url(url: str, key: str):
 #     chave_youtube = ''
 
 
-url_youtube = Variable.get('URL_API_YOUTUBE')
-chave_youtube = Variable.get('key_youtube')
+# url_youtube = Variable.get('URL_API_YOUTUBE')
+# chave_youtube = Variable.get('key_youtube')
+
+url_youtube = os.environ['URL_API_YOUTUBE']
+chave_youtube = os.environ['key_youtube']
+
 
 # if checar_url(Variable.get('URL_API_YOUTUBE'), Variable.get('key_youtube')):
 
