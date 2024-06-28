@@ -58,44 +58,45 @@ with DAG(
         task_id='task_inicio_dag',
         dag=dag
     )
-with TaskGroup('task_youtube_api_historico_pesquisa', dag=dag) as tg1:
-    lista_task_historico = []
-    for termo_assunto in lista_assunto:
-        id_termo_assunto = unidecode(termo_assunto.lower().replace(' ', ''))
-        id_task = f'id_youtube_api_historico_pesquisa_{id_termo_assunto}'
-        extracao_api_youtube_historico_pesquisa = YoutubeBuscaOperator(
-            task_id=id_task,
-            data_inicio=data_hora_busca,
-            ordem_extracao=YoutubeBuscaPesquisaHook(
-                consulta=termo_assunto,
-                data_inicio=data_hora_busca
-            ),
-            extracao_dados=(
-                InfraJson(
-                    camada_datalake='bronze',
-                    assunto=id_termo_assunto,
-                    pasta=data,
-                    metrica='historico_pesquisa',
-                    nome_arquivo='historico_pesquisa.json',
+    with TaskGroup('task_youtube_api_historico_pesquisa', dag=dag) as tg1:
+        lista_task_historico = []
+        for termo_assunto in lista_assunto:
+            id_termo_assunto = unidecode(
+                termo_assunto.lower().replace(' ', '_'))
+            id_task = f'id_youtube_api_historico_pesquisa_{id_termo_assunto}'
+            extracao_api_youtube_historico_pesquisa = YoutubeBuscaOperator(
+                task_id=id_task,
+                data_inicio=data_hora_busca,
+                ordem_extracao=YoutubeBuscaPesquisaHook(
+                    consulta=termo_assunto,
+                    data_inicio=data_hora_busca
                 ),
-                InfraPicke(
-                    camada_datalake='bronze',
-                    assunto=id_termo_assunto,
-                    pasta=None,
-                    metrica=None,
-                    nome_arquivo='id_videos.pkl'
+                extracao_dados=(
+                    InfraJson(
+                        camada_datalake='bronze',
+                        assunto=id_termo_assunto,
+                        pasta=data,
+                        metrica='historico_pesquisa',
+                        nome_arquivo='historico_pesquisa.json',
+                    ),
+                    InfraPicke(
+                        camada_datalake='bronze',
+                        assunto=id_termo_assunto,
+                        pasta=None,
+                        metrica=None,
+                        nome_arquivo='id_videos.pkl'
+                    ),
+                    InfraPicke(
+                        camada_datalake='bronze',
+                        assunto=id_termo_assunto,
+                        pasta=None,
+                        metrica=None,
+                        nome_arquivo='id_canais_brasileiros.pkl'
+                    )
                 ),
-                InfraPicke(
-                    camada_datalake='bronze',
-                    assunto=id_termo_assunto,
-                    pasta=None,
-                    metrica=None,
-                    nome_arquivo='id_canais_brasileiros.pkl'
-                )
-            ),
-            termo_pesquisa=termo_assunto
+                termo_pesquisa=termo_assunto
 
-        )
+            )
 
         lista_task_historico.append(
             extracao_api_youtube_historico_pesquisa
@@ -152,13 +153,13 @@ with TaskGroup('task_youtube_api_historico_pesquisa', dag=dag) as tg1:
 #     )
 # )
 
-#     task_fim = EmptyOperator(
-#         task_id='task_fim_dag',
-#         dag=dag
-#     )
+    task_fim = EmptyOperator(
+        task_id='task_fim_dag',
+        dag=dag
+    )
 
 
-# task_inicio >> task_fim
+task_inicio >> tg1 >> task_fim
 
 
 # task_inicio >> transform_spark_submit >> task_fim
