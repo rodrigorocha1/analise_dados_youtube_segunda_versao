@@ -39,6 +39,7 @@ class YoutubeBuscaOperator(YoutubeOperator):
                 infra=self._extracao_dados[2]
             )
             self._extracao_dados[2].salvar_dados(lista=lista_canais)
+            print('acabou')
 
             # Trazer ids dos canais brasileiros
             # Salvar ids canais brasileiross
@@ -47,7 +48,8 @@ class YoutubeBuscaOperator(YoutubeOperator):
         try:
             for json_response in self.ordem_extracao.run():
                 self.gravar_dados(json_response)
-        except:
+        except Exception as e:
+            print(e)
             exit
 
 
@@ -66,7 +68,7 @@ if __name__ == "__main__":
     ) as dag:
         data_hora_atual = pendulum.now('America/Sao_Paulo').to_iso8601_string()
         data_hora_atual = pendulum.parse(data_hora_atual)
-        data_hora_busca = data_hora_atual.subtract(hours=7)
+        data_hora_busca = data_hora_atual.subtract(hours=1)
         data_hora_busca = data_hora_busca.strftime('%Y-%m-%dT%H:%M:%SZ')
         data = 'extracao_data_' + \
             data_hora_busca.split('T')[0].replace('-', '_')

@@ -66,5 +66,5 @@ class DadosYoutube():
             id_canal = canal['snippet']['id']
             if id_canal not in lista_canais_salvos:
                 if cls.verificar_idioma_canal(id_canal):
-                    lista_id_canais.append(canal['snippet']['id'])
+                    lista_id_canais.append(canal['snippet']['channelId'])
         return lista_id_canais

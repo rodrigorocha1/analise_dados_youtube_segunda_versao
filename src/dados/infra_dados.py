@@ -23,6 +23,7 @@ class InfraDados(IInfraDados):
         """
         self.__caminho_base = os.getcwd()
         self.__camada_datalake = camada_datalake
+        self.__nome_pasta_armazenamento = 'datalake'
         self.__assunto = assunto
         self.__pasta = pasta
         self.__metrica = metrica
@@ -30,20 +31,18 @@ class InfraDados(IInfraDados):
         if self.__metrica is not None:
             self._diretorio_completo = os.path.join(
                 self.__caminho_base,
-                'data',
+                self.__nome_pasta_armazenamento,
                 self.__camada_datalake,
                 self.__assunto,
                 self.__pasta,
-                self.__metrica,
-                self._nome_arquivo
+                self.__metrica
 
             )
         else:
-            self._caminho_completo = os.path.join(
+            self._diretorio_completo = os.path.join(
                 self.__caminho_base,
-                'data',
+                self.__nome_pasta_armazenamento,
                 self.__camada_datalake,
-                self.__assunto,
-                self._nome_arquivo
+                self.__assunto
 
             )
