@@ -61,9 +61,10 @@ class DadosYoutube():
         lista_id_canais = []
         # abrir lista canais salvos
         lista_canais_salvos = infra.carregar_dados()
+        lista_canais_salvos = [] if lista_canais_salvos is None else lista_canais_salvos
         # fazer for da requisicao:
         for canal in req['items']:
-            id_canal = canal['snippet']['id']
+            id_canal = canal['snippet']['channelId']
             if id_canal not in lista_canais_salvos:
                 if cls.verificar_idioma_canal(id_canal):
                     lista_id_canais.append(canal['snippet']['channelId'])
