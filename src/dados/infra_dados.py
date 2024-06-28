@@ -42,7 +42,6 @@ class InfraDados(IInfraDados):
                 self.__caminho_base,
                 self.__camada_datalake,
                 self.__assunto,
-                self.__pasta,
                 self._nome_arquivo
 
             )

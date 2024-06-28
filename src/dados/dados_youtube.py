@@ -1,6 +1,7 @@
 from typing import Dict, List
 import requests
 import variaveis.variaveis as v
+from src.dados.infra_pickle import InfraPicke
 
 
 class DadosYoutube():
@@ -56,11 +57,14 @@ class DadosYoutube():
         return lista_id_comentarios_encandeados
 
     @classmethod
-    def obter_lista_canais_brasileiros(cls, req: Dict) -> List[str]:
+    def obter_lista_canais_brasileiros(cls, req: Dict, infra: InfraPicke) -> List[str]:
         lista_id_canais = []
         # abrir lista canais salvos
+        lista_canais_salvos = infra.carregar_dados()
         # fazer for da requisicao:
-        # verificar se o id canal já está no arquivo
-        # se não tiver, fazer a consulta na API
-        # e retornar com a lista
-        pass
+        for canal in req['items']:
+            id_canal = canal['snippet']['id']
+            if id_canal not in lista_canais_salvos:
+                if cls.verificar_idioma_canal(id_canal):
+                    lista_id_canais.append(canal['snippet']['id'])
+        return lista_id_canais

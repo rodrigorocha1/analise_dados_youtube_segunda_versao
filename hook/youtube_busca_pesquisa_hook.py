@@ -13,7 +13,8 @@ class YoutubeBuscaPesquisaHook(YoutubeHook):
             conn_id (str, optional): id da dag. Defaults to None.
             carregar_dados (IInfraDados, optional): Carregar o objeto de arquivo que bai ser shamafo. Defaults to None.
         """
-        super().__init__(data_inicio, consulta, conn_id, carregar_dados)
+        self._consulta = consulta
+        super().__init__(data_inicio, conn_id, carregar_dados)
 
     def _criar_url(self) -> str:
         """Retorna a url

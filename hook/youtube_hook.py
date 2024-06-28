@@ -19,7 +19,7 @@ class YoutubeHook(HttpHook, ABC):
         """
         self._conn_id = conn_id
         self._data_inicio = data_inicio
-        self._consulta = consulta
+
         self._CHAVE = v.chave_youtube
         self._URL = v.url_youtube
         self._carregar_dados = carregar_dados
