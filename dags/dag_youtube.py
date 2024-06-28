@@ -74,7 +74,7 @@ with TaskGroup('task_youtube_api_historico_pesquisa', dag=dag) as tg1:
                 InfraJson(
                     camada_datalake='bronze',
                     assunto=id_termo_assunto,
-                    pasta=f'extracao_dia_{data}',
+                    pasta=data,
                     metrica='historico_pesquisa',
                     nome_arquivo='historico_pesquisa.json',
                 ),
