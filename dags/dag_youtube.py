@@ -6,6 +6,7 @@ try:
 except:
     pass
 import pendulum
+from unidecode import unidecode
 from airflow.operators.empty import EmptyOperator
 from airflow.models import DAG
 from airflow.utils.task_group import TaskGroup
@@ -60,31 +61,40 @@ with DAG(
 with TaskGroup('task_youtube_api_historico_pesquisa', dag=dag) as tg1:
     lista_task_historico = []
     for termo_assunto in lista_assunto:
-        id_termo_assunto = termo_assunto.replace(
-            ' ', '_').lower().replace('|', '_')
-        termo_assunto_pasta = termo_assunto.replace(
-            ' ', '_').replace('|', '_').replace('ã', 'a').replace('ç', 'c')
-        id_task = f'id_youtube_api_historico_pesquisa_{id_termo_assunto}',
+        id_termo_assunto = unidecode(termo_assunto.lower().replace(' ', ''))
+        id_task = f'id_youtube_api_historico_pesquisa_{id_termo_assunto}'
         extracao_api_youtube_historico_pesquisa = YoutubeBuscaOperator(
             task_id=id_task,
             data_inicio=data_hora_busca,
             ordem_extracao=YoutubeBuscaPesquisaHook(
-                data_inicio=data_hora_busca,
-                consulta=termo_assunto
+                consulta=termo_assunto,
+                data_inicio=data_hora_busca
             ),
-            termo_consulta=termo_assunto,
             extracao_dados=(
                 InfraJson(
                     camada_datalake='bronze',
-                    assunto=termo_assunto,
-                    pasta=f'estracao_dia_{data}',
+                    assunto=id_termo_assunto,
+                    pasta=f'extracao_dia_{data}',
                     metrica='historico_pesquisa',
                     nome_arquivo='historico_pesquisa.json',
                 ),
                 InfraPicke(
-
+                    camada_datalake='bronze',
+                    assunto=id_termo_assunto,
+                    pasta=None,
+                    metrica=None,
+                    nome_arquivo='id_videos.pkl'
+                ),
+                InfraPicke(
+                    camada_datalake='bronze',
+                    assunto=id_termo_assunto,
+                    pasta=None,
+                    metrica=None,
+                    nome_arquivo='id_canais.pkl'
                 )
-            )
+            ),
+            termo_pesquisa=termo_assunto
+
         )
 
         lista_task_historico.append(
