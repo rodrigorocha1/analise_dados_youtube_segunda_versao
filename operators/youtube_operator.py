@@ -12,6 +12,7 @@ from src.dados.dados_youtube import DadosYoutube
 
 
 class YoutubeOperator(BaseOperator, ABC):
+    template_fields = ['ordem_extracao']
 
     def __init__(
         self,

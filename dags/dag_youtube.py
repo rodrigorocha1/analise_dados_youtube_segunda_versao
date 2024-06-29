@@ -91,7 +91,7 @@ with DAG(
                         assunto=id_termo_assunto,
                         pasta=None,
                         metrica=None,
-                        nome_arquivo='id_canais_brasileiros.pkl'
+                        nome_arquivo='id_canais.pkl'
                     )
                 ),
                 termo_pesquisa=termo_assunto

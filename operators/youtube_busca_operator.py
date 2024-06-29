@@ -6,28 +6,23 @@ try:
         os.path.join(os.path.dirname(__file__), '..')))
 except:
     pass
-from src.dados.infra_pickle import InfraPicke
 from typing import Dict, Tuple
 from hook.youtube_hook import YoutubeHook
 from operators.youtube_operator import YoutubeOperator
+from src.dados.infra_pickle import InfraPicke
 from src.dados.iinfra_dados import IInfraDados
 
 
 class YoutubeBuscaOperator(YoutubeOperator):
     template_fields = [
-        'ordem_extracao',
-        'extracao_dados',
-        'extracao_unica',
-        'termo_pesquisa',
-        'data_inicio'
+        'ordem_extracao'
     ]
 
     def __init__(self, extracao_dados: Tuple[IInfraDados], data_inicio: str, ordem_extracao: YoutubeHook, termo_pesquisa: str, **kwargs):
-        self.__ordem_extracao = ordem_extracao
         self._extracao_dados = extracao_dados
         self._data_inicio = data_inicio
         self._termo_pesquisa = termo_pesquisa
-        super().__init__(ordem_extracao=self.__ordem_extracao, **kwargs)
+        super().__init__(ordem_extracao=ordem_extracao, **kwargs)
 
     def gravar_dados(self, req: Dict):
         if len(req['items']) > 0:
