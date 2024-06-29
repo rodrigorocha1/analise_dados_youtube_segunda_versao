@@ -18,11 +18,11 @@ class YoutubeBuscaOperator(YoutubeOperator):
         'ordem_extracao'
     ]
 
-    def __init__(self, extracao_dados: Tuple[IInfraDados], data_inicio: str, ordem_extracao: YoutubeHook, termo_pesquisa: str, **kwargs):
-        self._extracao_dados = extracao_dados
+    def __init__(self, data_inicio: str, termo_pesquisa: str, ordem_extracao: YoutubeHook, extracao_dados: Tuple[IInfraDados], **kwargs):
         self._data_inicio = data_inicio
         self._termo_pesquisa = termo_pesquisa
-        super().__init__(ordem_extracao=ordem_extracao, **kwargs)
+        super().__init__(ordem_extracao=ordem_extracao,
+                         extracao_dados=extracao_dados, **kwargs)
 
     def gravar_dados(self, req: Dict):
         if len(req['items']) > 0:
