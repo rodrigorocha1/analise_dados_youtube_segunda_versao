@@ -32,17 +32,23 @@ data_hora_busca = data_hora_atual.subtract(hours=7)
 data_hora_busca = data_hora_busca.strftime('%Y-%m-%dT%H:%M:%SZ')
 
 
-lista_assunto = [
-    'Power BI',
-    'Python AND dados',
-    'Cities Skylines',
-    'Cities Skylines 2',
-    'Linux',
-    'Linux Gamming',
-    'genshin impact',
-    'zelda'
-]
+# lista_assunto = [
+#     'Power BI',
+#     'Python AND dados',
+#     'Cities Skylines',
+#     'Cities Skylines 2',
+#     'Linux',
+#     'Linux Gamming',
+#     'genshin impact',
+#     'zelda'
+# ]
 
+
+lista_assunto = [
+    'Infection Free Zone',
+    'Manor Lords',
+    'Linux'
+]
 
 data = 'extracao_data_' + data_hora_busca.split('T')[0].replace('-', '_')
 
