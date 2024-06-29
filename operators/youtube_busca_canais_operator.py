@@ -9,9 +9,14 @@ class YoutubeBuscaCanaisOperator(YoutubeOperator):
         'ordem_extracao'
     ]
 
-    def __init__(self, ordem_extracao: YoutubeHook, extracao_unica: IInfraDados, **kwargs):
+    def __init__(
+            self,
+            extracao_unica: IInfraDados,
+            ordem_extracao: YoutubeHook,
+            **kwargs):
+
         self.extracao_unica = extracao_unica
-        super().__init__(ordem_extracao, **kwargs)
+        super().__init__(ordem_extracao=ordem_extracao, **kwargs)
 
     def gravar_dados(self, req: Dict):
         if len(req['items']) > 0:
