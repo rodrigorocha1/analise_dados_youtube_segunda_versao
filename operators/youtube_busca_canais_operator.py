@@ -15,8 +15,8 @@ class YoutubeBuscaCanaisOperator(YoutubeOperator):
 
     def gravar_dados(self, req: Dict):
         if len(req['items']) > 0:
-            print(req)
-            self.extracao_unica.salvar_dados(req=req)
+
+            self._extracao_unica.salvar_dados(req=req)
 
     def execute(self, context):
         try:
