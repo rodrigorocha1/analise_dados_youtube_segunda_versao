@@ -16,10 +16,16 @@ class YoutubeBuscaVideoOperator(YoutubeOperator):
         'ordem_extracao'
     ]
 
-    def __init__(self, ordem_extracao: YoutubeHook, extracao_unica: IInfraDados = None, extracao_salvar_dados: IInfraDados = None, ** kwargs):
+    def __init__(
+        self,
+        ordem_extracao: YoutubeHook,
+        extracao_unica: IInfraDados = None,
+        extracao_salvar_dados: IInfraDados = None,
+            ** kwargs
+    ):
         self.extracao_unica = extracao_unica
         self.extracao_salvar_dados = extracao_salvar_dados
-        super().__init__(ordem_extracao, **kwargs)
+        super().__init__(ordem_extracao=ordem_extracao, **kwargs)
 
     def gravar_dados(self, req: Dict):
         """Método para gravar os dados

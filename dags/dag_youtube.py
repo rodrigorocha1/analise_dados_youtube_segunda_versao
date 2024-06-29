@@ -16,6 +16,8 @@ from src.dados.infra_pickle import InfraPicke
 from variaveis.variaveis import lista_assunto
 from operators.youtube_busca_operator import YoutubeBuscaOperator
 from operators.youtube_busca_canais_operator import YoutubeBuscaCanaisOperator
+from operators.youtube_busca_videos_operator import YoutubeBuscaVideoOperator
+from hook.youtube_busca_video_hook import YoutubeBuscaVideoHook
 from hook.youtube_busca_canais_hook import YoutubeBuscaCanaisHook
 from hook.youtube_busca_pesquisa_hook import YoutubeBuscaPesquisaHook
 
@@ -110,13 +112,45 @@ with DAG(
             lista_task_canais.append(extracao_youtube_canais)
 
     with TaskGroup('task_youtube_dados_video', dag=dag) as tg3:
-        pass
+        lista_task_canais = []
+        for termo_assunto in lista_assunto:
+            id_termo_assunto = unidecode(
+                termo_assunto.lower().replace(' ', '_'))
+            id_task = f'id_youtube_api_dados_video_{id_termo_assunto}'
+            extracao_dados_video = YoutubeBuscaVideoOperator(
+                task_id=id_task,
+                extracao_salvar_dados=InfraPicke(
+                    camada_datalake='bronze',
+                    assunto=id_termo_assunto,
+                    pasta=None,
+                    metrica=None,
+                    nome_arquivo='id_videos_comentarios.pkl'
+                ),
+                ordem_extracao=YoutubeBuscaVideoHook(
+                    carregar_dados=InfraPicke(
+                        camada_datalake='bronze',
+                        assunto=id_termo_assunto,
+                        pasta=None,
+                        metrica=None,
+                        nome_arquivo='id_videos.pkl'
+                    )
+                ),
+                extracao_unica=InfraJson(
+                    camada_datalake='bronze',
+                    assunto=id_termo_assunto,
+                    pasta=data,
+                    metrica='estatisticas_videos',
+                    nome_arquivo='req_estatisticas_videos.json'
+
+                )
+            )
+            lista_task_canais.append(extracao_dados_video)
 
     task_fim = EmptyOperator(
         task_id='task_fim_dag',
         dag=dag
     )
-task_inicio >> tg1 >> tg2 >> task_fim
+task_inicio >> tg1 >> tg2 >> tg3 >> task_fim
 
 
 # task_inicio >> transform_spark_submit >> task_fim
