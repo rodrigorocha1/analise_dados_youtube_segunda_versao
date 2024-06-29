@@ -8,18 +8,14 @@ import variaveis.variaveis as v
 
 
 class YoutubeHook(HttpHook, ABC):
-    def __init__(self,  data_inicio: str, consulta: str = None, conn_id: str = None, carregar_dados: IInfraDados = None) -> None:
+    def __init__(self, conn_id: str = None, carregar_dados: IInfraDados = None) -> None:
         """Método para inicializar o youtube hook
 
         Args:
-            data_inicio (str): data e hora de inicio da pesquisa
-            consulta (str, optional): termo para consulta na api do youtube. Defaults to None.
             conn_id (str, optional): id do airflow. Defaults to None.
             carregar_dados (IInfraDados, optional): tipo de carregamento de dados. Defaults to None.
         """
         self._conn_id = conn_id
-        self._data_inicio = data_inicio
-
         self._CHAVE = v.chave_youtube
         self._URL = v.url_youtube
         self._carregar_dados = carregar_dados

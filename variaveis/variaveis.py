@@ -5,6 +5,26 @@ from dotenv import load_dotenv
 import logging
 load_dotenv()
 
+
+# lista_assunto = [
+#     'Power BI',
+#     'Python AND dados',
+#     'Cities Skylines',
+#     'Cities Skylines 2',
+#     'Linux',
+#     'Linux Gamming',
+#     'genshin impact',
+#     'zelda'
+# ]
+
+
+lista_assunto = [
+    'Infection Free Zone',
+    'Manor Lords',
+    'Linux'
+]
+
+
 logging.basicConfig(
     filename='../log/requisicao.log',
     encoding='utf-8',

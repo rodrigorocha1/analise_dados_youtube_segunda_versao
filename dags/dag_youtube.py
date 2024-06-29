@@ -13,43 +13,15 @@ from airflow.utils.task_group import TaskGroup
 
 from src.dados.infra_json import InfraJson
 from src.dados.infra_pickle import InfraPicke
+from variaveis.variaveis import lista_assunto
 from operators.youtube_busca_operator import YoutubeBuscaOperator
-from operators.youtube_busca_videos_operator import YoutubeBuscaVideoOperator
-from operators.youtube_busca_respostas_operator import YoutubeBuscaRespostasOperator
-from operators.youtube_busca_comentarios_operator import YoutubeBuscaComentariosOperator
-from operators.youtube_busca_trends_operator import YoutubeBuscaTrendsOperator
-from hook.youtube_trends_hook import YoutubeTrendsYook
 from hook.youtube_busca_pesquisa_hook import YoutubeBuscaPesquisaHook
-from hook.youtube_busca_video_hook import YoutubeBuscaVideoHook
-from hook.youtube_busca_comentario_hook import YoutubeBuscaComentarioHook
-from hook.youtube_busca_resposta_hook import YoutubeBuscaRespostaHook
-import logging
 
 
 data_hora_atual = pendulum.now('America/Sao_Paulo').to_iso8601_string()
 data_hora_atual = pendulum.parse(data_hora_atual)
 data_hora_busca = data_hora_atual.subtract(hours=7)
 data_hora_busca = data_hora_busca.strftime('%Y-%m-%dT%H:%M:%SZ')
-
-
-# lista_assunto = [
-#     'Power BI',
-#     'Python AND dados',
-#     'Cities Skylines',
-#     'Cities Skylines 2',
-#     'Linux',
-#     'Linux Gamming',
-#     'genshin impact',
-#     'zelda'
-# ]
-
-
-lista_assunto = [
-    'Infection Free Zone',
-    'Manor Lords',
-    'Linux'
-]
-
 data = 'extracao_data_' + data_hora_busca.split('T')[0].replace('-', '_')
 
 
