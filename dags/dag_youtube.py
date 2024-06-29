@@ -15,6 +15,8 @@ from src.dados.infra_json import InfraJson
 from src.dados.infra_pickle import InfraPicke
 from variaveis.variaveis import lista_assunto
 from operators.youtube_busca_operator import YoutubeBuscaOperator
+from operators.youtube_busca_canais_operator import YoutubeBuscaCanaisOperator
+from hook.youtube_busca_canais_hook import YoutubeBuscaCanaisHook
 from hook.youtube_busca_pesquisa_hook import YoutubeBuscaPesquisaHook
 
 
@@ -80,64 +82,41 @@ with DAG(
             extracao_api_youtube_historico_pesquisa
         )
 
-# with TaskGroup('tsk_extracao_api_youtube_dados_videos_estatistica', dag=dag) as tg2:
-#     lista_task_dados_videos = []
-#     for termo_assunto in lista_assunto:
-#         id_termo_assunto = termo_assunto.replace(
-#             ' ', '_').lower().replace('|', '_')
-#         termo_assunto_pasta = termo_assunto.replace(
-#             ' ', '_').replace('|', '_').replace('ã', 'a').replace('ç', 'c')
-#         extracao_api_youtube_dados_videos_estatistica = YoutubeBuscaVideoOperator(
-#             task_id=f'id_extracao_api_youtube_dados_videos_estatistica_{
-#                 id_termo_assunto}',
-#             data_inicio=None,
-#             ordem_extracao=YoutubeBuscaVideoHook(
-#                 data_inicio=data_hora_busca,
-#                 carregar_dados=InfraPicke(
-#                     diretorio_datalake='bronze',
-#                     termo_assunto=f'assunto_{termo_assunto_pasta}',
-#                     path_extracao='id_video',
-#                     metrica=None,
-#                     nome_arquivo='id_video.pkl'
-#                 )
-#             ),
-#             extracao_dados=None,
-#             extracao_unica=InfraJson(
-#                 diretorio_datalake='bronze',
-#                 termo_assunto=f'assunto_{termo_assunto_pasta}',
-#                 path_extracao=data,
-#                 metrica='estatisticas',
-#                 nome_arquivo='req_video.json'
+    with TaskGroup('task_youtube_dados_canais', dag=dag) as tg2:
+        lista_task_canais = []
+        for termo_assunto in lista_assunto:
+            id_termo_assunto = unidecode(
+                termo_assunto.lower().replace(' ', '_'))
+            id_task = f'id_youtube_api_dados_canais_{id_termo_assunto}'
+            extracao_youtube_canais = YoutubeBuscaCanaisOperator(
+                task_id=id_task,
+                extracao_unica=InfraJson(
+                    camada_datalake='bronze',
+                    assunto=id_termo_assunto,
+                    pasta=data,
+                    metrica='estatisticas_canais_brasileiros',
+                    nome_arquivo='req_estatisticas_canais_brasileiros.json'
 
-#             )
-#         )
-#         lista_task_dados_videos.append(
-#             extracao_api_youtube_dados_videos_estatistica
-#         )
+                ),
+                ordem_extracao=YoutubeBuscaCanaisHook(
+                    carregar_dados=InfraPicke(
+                        camada_datalake='bronze',
+                        assunto=id_termo_assunto,
+                        pasta=None,
+                        metrica=None,
+                        nome_arquivo='id_canais.pkl'
+                    ),
 
-# extracao_api_video_trends = YoutubeBuscaTrendsOperator(
-#     task_id='id_extracao_api_video_trends',
-#     data_inicio=data_hora_busca,
-#     ordem_extracao=YoutubeTrendsYook(
-#         data_inicio=data_hora_busca
-#     ),
-#     extracao_dados=None,
-#     extracao_unica=InfraJson(
-#         diretorio_datalake='bronze',
-#         termo_assunto='top_brazil',
-#         path_extracao=data,
-#         metrica='top_brazil',
-#         nome_arquivo='req_top_brazil.json'
-#     )
-# )
+                )
+            )
+
+            lista_task_canais.append(extracao_youtube_canais)
 
     task_fim = EmptyOperator(
         task_id='task_fim_dag',
         dag=dag
     )
-
-
-task_inicio >> tg1 >> task_fim
+task_inicio >> tg1 >> tg2 >> task_fim
 
 
 # task_inicio >> transform_spark_submit >> task_fim
