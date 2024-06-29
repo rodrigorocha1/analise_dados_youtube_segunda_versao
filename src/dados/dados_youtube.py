@@ -57,6 +57,14 @@ class DadosYoutube():
         return lista_id_comentarios_encandeados
 
     @classmethod
+    def obter_lista_videos_comentarios(cls, req: Dict) -> List[str]:
+        lista_id_videos = []
+        if int(req['items'][0]['statistics']['commentCount']) > 0:
+            lista_id_videos.append(
+                req['items'][0]['id'])
+            return lista_id_videos
+
+    @classmethod
     def obter_lista_canais_brasileiros(cls, req: Dict, infra: InfraPicke) -> List[str]:
         lista_id_canais = []
         # abrir lista canais salvos
