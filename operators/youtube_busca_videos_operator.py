@@ -4,46 +4,22 @@ try:
     sys.path.insert(0, os.path.abspath(os.curdir))
 except ModuleNotFoundError:
     pass
-from typing import Dict, Tuple
+from typing import Dict
 from hook.youtube_hook import YoutubeHook
 from operators.youtube_operator import YoutubeOperator
 from src.dados.iinfra_dados import IInfraDados
 
 
 class YoutubeBuscaVideoOperator(YoutubeOperator):
+
     template_fields = [
-        'ordem_extracao',
-        'extracao_dados',
-        'extracao_unica',
-        'termo_consulta',
-        'data_inicio'
+        'ordem_extracao'
     ]
 
-    def __init__(
-        self, ordem_extracao: YoutubeHook,
-            extracao_dados: Tuple[IInfraDados],
-            extracao_unica: IInfraDados = None,
-            termo_consulta: str = None,
-            data_inicio: str = None,
-            **kwargs
-    ):
-        """_summary_
-
-        Args:
-            ordem_extracao (YoutubeHook): Recebe um hook
-            extracao_dados (Tuple[IInfraDados]): Uma tupla para ler os arquivos 
-            extracao_unica (IInfraDados, optional): Recebe um objeto para gravar os dados. Defaults to None.
-            termo_consulta (str, optional): termo de consulta. Defaults to None.
-            data_inicio (str, optional): data de ínicio. Defaults to None.
-        """
-        super().__init__(
-            ordem_extracao=ordem_extracao,
-            extracao_dados=extracao_dados,
-            extracao_unica=extracao_unica,
-            termo_consulta=termo_consulta,
-            data_inicio=data_inicio,
-            **kwargs
-        )
+    def __init__(self, ordem_extracao: YoutubeHook, extracao_unica: IInfraDados = None, extracao_salvar_dados: IInfraDados = None, ** kwargs):
+        self.extracao_unica = extracao_unica
+        self.extracao_salvar_dados = extracao_salvar_dados
+        super().__init__(ordem_extracao, **kwargs)
 
     def gravar_dados(self, req: Dict):
         """Método para gravar os dados
@@ -54,6 +30,10 @@ class YoutubeBuscaVideoOperator(YoutubeOperator):
 
         if len(req['items']) > 0:
             self.extracao_unica.salvar_dados(req=req)
+            lista_videos_brasileiros = self.dados_youtube.obter_lista_videos_comentarios(
+                req=req)
+            self.extracao_salvar_dados.salvar_dados(
+                lista=lista_videos_brasileiros)
 
     def execute(self, context):
         """_summary_

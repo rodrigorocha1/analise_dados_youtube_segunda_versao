@@ -75,9 +75,7 @@ with DAG(
                     )
                 ),
                 termo_pesquisa=termo_assunto
-
             )
-
         lista_task_historico.append(
             extracao_api_youtube_historico_pesquisa
         )
@@ -106,11 +104,13 @@ with DAG(
                         metrica=None,
                         nome_arquivo='id_canais.pkl'
                     ),
-
                 )
             )
 
             lista_task_canais.append(extracao_youtube_canais)
+
+    with TaskGroup('task_youtube_dados_video', dag=dag) as tg3:
+        pass
 
     task_fim = EmptyOperator(
         task_id='task_fim_dag',
