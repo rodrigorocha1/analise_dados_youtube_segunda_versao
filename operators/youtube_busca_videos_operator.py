@@ -4,7 +4,7 @@ try:
     sys.path.insert(0, os.path.abspath(os.curdir))
 except ModuleNotFoundError:
     pass
-from typing import Dict
+from typing import Dict, Tuple
 from hook.youtube_hook import YoutubeHook
 from operators.youtube_operator import YoutubeOperator
 from src.dados.iinfra_dados import IInfraDados
@@ -16,16 +16,19 @@ class YoutubeBuscaVideoOperator(YoutubeOperator):
         'ordem_extracao'
     ]
 
-    def __init__(
-        self,
-        ordem_extracao: YoutubeHook,
-        extracao_unica: IInfraDados = None,
-        extracao_salvar_dados: IInfraDados = None,
-            ** kwargs
-    ):
-        self.extracao_unica = extracao_unica
-        self.extracao_salvar_dados = extracao_salvar_dados
-        super().__init__(ordem_extracao=ordem_extracao, **kwargs)
+    def __init__(self, ordem_extracao: YoutubeHook, extracao_manipulacao_dados: Tuple[IInfraDados], extracao_unica: IInfraDados = None, **kwargs):
+        super().__init__(ordem_extracao, extracao_manipulacao_dados, extracao_unica, **kwargs)
+
+    # def __init__(
+    #     self,
+    #     ordem_extracao: YoutubeHook,
+    #     extracao_unica: IInfraDados = None,
+    #     extracao_salvar_dados: IInfraDados = None,
+    #         ** kwargs
+    # ):
+    #     self.extracao_unica = extracao_unica
+    #     self.extracao_salvar_dados = extracao_salvar_dados
+    #     super().__init__(ordem_extracao=ordem_extracao, **kwargs)
 
     def gravar_dados(self, req: Dict):
         """Método para gravar os dados

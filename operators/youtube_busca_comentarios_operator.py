@@ -11,24 +11,9 @@ from src.dados.iinfra_dados import IInfraDados
 
 
 class YoutubeBuscaComentariosOperator(YoutubeOperator):
-    def __init__(
-            self,
-            ordem_extracao: YoutubeHook,
-            extracao_dados:
-            Tuple[IInfraDados],
-            extracao_unica: IInfraDados = None,
-            termo_consulta: str = None,
-            data_inicio: str = None,
-            **kwargs
-    ):
-        super().__init__(
-            ordem_extracao=ordem_extracao,
-            extracao_dados=extracao_dados,
-            extracao_unica=extracao_unica,
-            termo_consulta=termo_consulta,
-            data_inicio=data_inicio,
-            **kwargs
-        )
+
+    def __init__(self, ordem_extracao: YoutubeHook, **kwargs):
+        super().__init__(ordem_extracao, **kwargs)
 
     def gravar_dados(self, req: Dict):
         if len(req['items']) > 0:

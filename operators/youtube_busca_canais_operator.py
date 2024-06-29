@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Tuple
 from hook.youtube_hook import YoutubeHook
 from operators.youtube_operator import YoutubeOperator
 from src.dados.iinfra_dados import IInfraDados
@@ -9,17 +9,13 @@ class YoutubeBuscaCanaisOperator(YoutubeOperator):
         'ordem_extracao'
     ]
 
-    def __init__(
-            self,
-            extracao_unica: IInfraDados,
-            ordem_extracao: YoutubeHook,
-            **kwargs):
-
-        self.extracao_unica = extracao_unica
-        super().__init__(ordem_extracao=ordem_extracao, **kwargs)
+    def __init__(self, ordem_extracao: YoutubeHook, extracao_manipulacao_dados: Tuple[IInfraDados], extracao_unica: IInfraDados = None, **kwargs):
+        super().__init__(ordem_extracao=ordem_extracao,
+                         extracao_manipulacao_dados=extracao_manipulacao_dados, extracao_unica=extracao_unica, **kwargs)
 
     def gravar_dados(self, req: Dict):
         if len(req['items']) > 0:
+            print(req)
             self.extracao_unica.salvar_dados(req=req)
 
     def execute(self, context):

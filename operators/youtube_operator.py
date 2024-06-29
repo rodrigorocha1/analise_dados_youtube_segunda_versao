@@ -4,11 +4,12 @@ try:
     sys.path.insert(0, os.path.abspath(os.curdir))
 except ModuleNotFoundError:
     pass
-from typing import Dict
+from typing import Dict, Tuple
 from abc import ABC, abstractmethod
 from airflow.models import BaseOperator
 from hook.youtube_hook import YoutubeHook
 from src.dados.dados_youtube import DadosYoutube
+from src.dados.iinfra_dados import IInfraDados
 
 
 class YoutubeOperator(BaseOperator, ABC):
@@ -17,16 +18,15 @@ class YoutubeOperator(BaseOperator, ABC):
     def __init__(
         self,
             ordem_extracao: YoutubeHook,
-
+            extracao_manipulacao_dados: Tuple[IInfraDados],
+            extracao_unica: IInfraDados = None,
             **kwargs,
     ):
-        """init para youtube operator
-
-        Args:
-            ordem_extracao (str): ordem de extracao, recebe um Hook
-        """
+        self._extracao_manipulacao_dados = extracao_manipulacao_dados
+        self._extracao_unica = extracao_unica
         self.ordem_extracao = ordem_extracao
         self.dados_youtube = DadosYoutube()
+
         super().__init__(**kwargs)
 
     @abstractmethod

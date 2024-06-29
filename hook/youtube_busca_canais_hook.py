@@ -13,6 +13,7 @@ class YoutubeBuscaCanaisHook(YoutubeHook):
     def run(self):
         session = self.get_conn()
         lista_canais = self._carregar_dados.carregar_dados()
+
         url = self._criar_url()
         params = [
             {

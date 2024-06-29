@@ -9,7 +9,6 @@ except:
 from typing import Dict, Tuple
 from hook.youtube_hook import YoutubeHook
 from operators.youtube_operator import YoutubeOperator
-from src.dados.infra_pickle import InfraPicke
 from src.dados.iinfra_dados import IInfraDados
 
 
@@ -18,25 +17,35 @@ class YoutubeBuscaOperator(YoutubeOperator):
         'ordem_extracao'
     ]
 
-    def __init__(self, data_inicio: str,
-                 extracao_dados: Tuple[IInfraDados],
-                 termo_pesquisa: str, ordem_extracao:
-                 YoutubeHook, **kwargs):
-        self._data_inicio = data_inicio
+    def __init__(self, termo_pesquisa: str, ordem_extracao: YoutubeHook, extracao_manipulacao_dados: Tuple[IInfraDados], extracao_unica: IInfraDados = None, **kwargs):
+        """__init__ para Instanciar a busca de assunto
+
+        Args:
+            termo_pesquisa (str): assunto de pesquisa
+            ordem_extracao (YoutubeHook): Recebe um Hook
+            extracao_manipulacao_dados (Tuple[IInfraDados]): Recebe uma tupla de infra estrutura Carregar // Salvar
+            extracao_unica (IInfraDados, optional): Extração unica. Defaults to None.
+        """
         self._termo_pesquisa = termo_pesquisa
-        self._extracao_dados = extracao_dados
-        super().__init__(ordem_extracao=ordem_extracao, **kwargs)
+        super().__init__(
+            ordem_extracao=ordem_extracao,
+            extracao_manipulacao_dados=extracao_manipulacao_dados,
+            extracao_unica=extracao_unica, **kwargs
+        )
 
     def gravar_dados(self, req: Dict):
         if len(req['items']) > 0:
-            self._extracao_dados[0].salvar_dados(req=req)
+            self._extracao_manipulacao_dados[0].salvar_dados(req=req)
             lista_de_videos = self.dados_youtube.obter_lista_videos(req)
-            self._extracao_dados[1].salvar_dados(lista=lista_de_videos)
+            self._extracao_manipulacao_dados[1].salvar_dados(
+                lista=lista_de_videos)
             lista_canais = self.dados_youtube.obter_lista_canais_brasileiros(
                 req=req,
-                infra=self._extracao_dados[2]
+                infra=self._extracao_manipulacao_dados[2]
             )
-            self._extracao_dados[2].salvar_dados(lista=lista_canais)
+            print(f'lista canais {lista_canais}')
+            self._extracao_manipulacao_dados[2].salvar_dados(
+                lista=lista_canais)
             print('acabou')
 
             # Trazer ids dos canais brasileiros
@@ -49,64 +58,3 @@ class YoutubeBuscaOperator(YoutubeOperator):
         except Exception as e:
             print(e)
             exit
-
-
-if __name__ == "__main__":
-    import pendulum
-    from airflow.models import DAG, TaskInstance
-    from unidecode import unidecode
-    from hook.youtube_busca_pesquisa_hook import YoutubeBuscaPesquisaHook
-    from src.dados.infra_json import InfraJson
-
-    with DAG(
-        dag_id='extracao_youtube',
-        schedule_interval=None,
-        catchup=False,
-        start_date=pendulum.datetime(2023, 9, 8, tz='America/Sao_Paulo')
-    ) as dag:
-        data_hora_atual = pendulum.now('America/Sao_Paulo').to_iso8601_string()
-        data_hora_atual = pendulum.parse(data_hora_atual)
-        data_hora_busca = data_hora_atual.subtract(hours=1)
-        data_hora_busca = data_hora_busca.strftime('%Y-%m-%dT%H:%M:%SZ')
-        data = 'extracao_data_' + \
-            data_hora_busca.split('T')[0].replace('-', '_')
-
-        termo_assunto = 'Power BI'
-        id_termo_assunto = unidecode(termo_assunto.lower().replace(' ', ''))
-        id_task = f'id_youtube_api_historico_pesquisa_{id_termo_assunto}'
-        extracao_api_youtube_historico_pesquisa = YoutubeBuscaOperator(
-            task_id=id_task,
-            data_inicio=data_hora_busca,
-            ordem_extracao=YoutubeBuscaPesquisaHook(
-                consulta=termo_assunto,
-                data_inicio=data_hora_busca
-            ),
-            extracao_dados=(
-                InfraJson(
-                    camada_datalake='bronze',
-                    assunto=id_termo_assunto,
-                    pasta=data,
-                    metrica='historico_pesquisa',
-                    nome_arquivo='historico_pesquisa.json',
-                ),
-                InfraPicke(
-                    camada_datalake='bronze',
-                    assunto=id_termo_assunto,
-                    pasta=None,
-                    metrica=None,
-                    nome_arquivo='id_videos.pkl'
-                ),
-                InfraPicke(
-                    camada_datalake='bronze',
-                    assunto=id_termo_assunto,
-                    pasta=None,
-                    metrica=None,
-                    nome_arquivo='id_canais.pkl'
-                )
-            ),
-            termo_pesquisa=termo_assunto
-
-        )
-
-        ti = TaskInstance(task=extracao_api_youtube_historico_pesquisa)
-        extracao_api_youtube_historico_pesquisa.execute(ti.task_id)

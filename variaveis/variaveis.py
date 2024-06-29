@@ -19,7 +19,7 @@ load_dotenv()
 
 
 lista_assunto = [
-    'Infection Free Zone', 'Linux'
+    'Cities Skylines', 'Linux'
 ]
 
 
