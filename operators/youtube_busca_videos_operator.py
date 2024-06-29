@@ -17,18 +17,8 @@ class YoutubeBuscaVideoOperator(YoutubeOperator):
     ]
 
     def __init__(self, ordem_extracao: YoutubeHook, extracao_manipulacao_dados: Tuple[IInfraDados], extracao_unica: IInfraDados = None, **kwargs):
-        super().__init__(ordem_extracao, extracao_manipulacao_dados, extracao_unica, **kwargs)
-
-    # def __init__(
-    #     self,
-    #     ordem_extracao: YoutubeHook,
-    #     extracao_unica: IInfraDados = None,
-    #     extracao_salvar_dados: IInfraDados = None,
-    #         ** kwargs
-    # ):
-    #     self.extracao_unica = extracao_unica
-    #     self.extracao_salvar_dados = extracao_salvar_dados
-    #     super().__init__(ordem_extracao=ordem_extracao, **kwargs)
+        super().__init__(ordem_extracao=ordem_extracao,
+                         extracao_manipulacao_dados=extracao_manipulacao_dados, extracao_unica=extracao_unica, **kwargs)
 
     def gravar_dados(self, req: Dict):
         """Método para gravar os dados
@@ -38,10 +28,10 @@ class YoutubeBuscaVideoOperator(YoutubeOperator):
         """
 
         if len(req['items']) > 0:
-            self.extracao_unica.salvar_dados(req=req)
+            self._extracao_unica.salvar_dados(req=req)
             lista_videos_brasileiros = self.dados_youtube.obter_lista_videos_comentarios(
                 req=req)
-            self.extracao_salvar_dados.salvar_dados(
+            self._extracao_manipulacao_dados.salvar_dados(
                 lista=lista_videos_brasileiros)
 
     def execute(self, context):
