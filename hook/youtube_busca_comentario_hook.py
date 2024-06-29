@@ -18,9 +18,6 @@ class YoutubeBuscaComentarioHook(YoutubeHook):
         session = self.get_conn()
         lista_videos = self._carregar_dados.carregar_dados()
         url = self._criar_url()
-        print('consultando', self._consulta)
-        print('Lista vídeos', lista_videos)
-        print('total de vídeos', len(lista_videos))
         params = [
             {
                 'part': 'snippet',

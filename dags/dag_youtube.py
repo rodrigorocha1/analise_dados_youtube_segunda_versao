@@ -111,40 +111,40 @@ with DAG(
 
     #         lista_task_canais.append(extracao_youtube_canais)
 
-    with TaskGroup('task_youtube_dados_video', dag=dag) as tg3:
-        lista_task_canais = []
-        for termo_assunto in lista_assunto:
-            id_termo_assunto = unidecode(
-                termo_assunto.lower().replace(' ', '_'))
-            id_task = f'id_youtube_api_dados_video_{id_termo_assunto}'
-            extracao_dados_video = YoutubeBuscaVideoOperator(
-                task_id=id_task,
-                extracao_manipulacao_dados=(InfraPicke(
-                    camada_datalake='bronze',
-                    assunto=id_termo_assunto,
-                    pasta=None,
-                    metrica=None,
-                    nome_arquivo='id_videos_comentarios.pkl'
-                )),
-                ordem_extracao=YoutubeBuscaVideoHook(
-                    carregar_dados=InfraPicke(
-                        camada_datalake='bronze',
-                        assunto=id_termo_assunto,
-                        pasta=None,
-                        metrica=None,
-                        nome_arquivo='id_videos.pkl'
-                    )
-                ),
-                extracao_unica=InfraJson(
-                    camada_datalake='bronze',
-                    assunto=id_termo_assunto,
-                    pasta=data,
-                    metrica='estatisticas_videos',
-                    nome_arquivo='req_estatisticas_videos.json'
+    # with TaskGroup('task_youtube_dados_video', dag=dag) as tg3:
+    #     lista_task_canais = []
+    #     for termo_assunto in lista_assunto:
+    #         id_termo_assunto = unidecode(
+    #             termo_assunto.lower().replace(' ', '_'))
+    #         id_task = f'id_youtube_api_dados_video_{id_termo_assunto}'
+    #         extracao_dados_video = YoutubeBuscaVideoOperator(
+    #             task_id=id_task,
+    #             extracao_manipulacao_dados=(InfraPicke(
+    #                 camada_datalake='bronze',
+    #                 assunto=id_termo_assunto,
+    #                 pasta=None,
+    #                 metrica=None,
+    #                 nome_arquivo='id_videos_comentarios.pkl'
+    #             )),
+    #             ordem_extracao=YoutubeBuscaVideoHook(
+    #                 carregar_dados=InfraPicke(
+    #                     camada_datalake='bronze',
+    #                     assunto=id_termo_assunto,
+    #                     pasta=None,
+    #                     metrica=None,
+    #                     nome_arquivo='id_videos.pkl'
+    #                 )
+    #             ),
+    #             extracao_unica=InfraJson(
+    #                 camada_datalake='bronze',
+    #                 assunto=id_termo_assunto,
+    #                 pasta=data,
+    #                 metrica='estatisticas_videos',
+    #                 nome_arquivo='req_estatisticas_videos.json'
 
-                )
-            )
-            lista_task_canais.append(extracao_dados_video)
+    #             )
+    #         )
+    #         lista_task_canais.append(extracao_dados_video)
 
     task_fim = EmptyOperator(
         task_id='task_fim_dag',

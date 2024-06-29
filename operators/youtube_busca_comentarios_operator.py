@@ -4,10 +4,9 @@ try:
     sys.path.insert(0, os.path.abspath(os.curdir))
 except ModuleNotFoundError:
     pass
-from typing import Dict, Tuple
+from typing import Dict
 from hook.youtube_hook import YoutubeHook
 from operators.youtube_operator import YoutubeOperator
-from src.dados.iinfra_dados import IInfraDados
 
 
 class YoutubeBuscaComentariosOperator(YoutubeOperator):
