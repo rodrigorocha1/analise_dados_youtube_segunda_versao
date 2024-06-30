@@ -77,3 +77,12 @@ class DadosYoutube():
                 if cls.verificar_idioma_canal(id_canal):
                     lista_id_canais.append(canal['snippet']['channelId'])
         return lista_id_canais
+
+    @classmethod
+    def obter_lista_resposta_comentarios(cls, req: Dict) -> List[str]:
+        lista_resposta_comentarios = []
+        for item in req['items']:
+            if item['snippet']['totalReplyCount'] > 0:
+                lista_resposta_comentarios.append(item['id'])
+
+        return lista_resposta_comentarios
