@@ -17,8 +17,6 @@ from variaveis.variaveis import lista_assunto
 from operators.youtube_busca_operator import YoutubeBuscaOperator
 from operators.youtube_busca_canais_operator import YoutubeBuscaCanaisOperator
 from operators.youtube_busca_videos_operator import YoutubeBuscaVideoOperator
-from operators.youtube_busca_comentarios_operator import YoutubeBuscaComentariosOperator
-from hook.youtube_busca_comentario_hook import YoutubeBuscaComentarioHook
 from hook.youtube_busca_video_hook import YoutubeBuscaVideoHook
 from hook.youtube_busca_canais_hook import YoutubeBuscaCanaisHook
 from hook.youtube_busca_pesquisa_hook import YoutubeBuscaPesquisaHook
@@ -147,43 +145,6 @@ with DAG(
                 )
             )
             lista_task_canais.append(extracao_dados_video)
-
-    with TaskGroup('task_youtube_comentarios', dag=dag) as tg4:
-        lista_task_comentarios = []
-        for termo_assunto in lista_assunto:
-            id_termo_assunto = unidecode(
-                termo_assunto.lower().replace(' ', '_'))
-            id_task = f'id_youtube_api_comentarios_{id_termo_assunto}'
-            extracao_dados_comentario = YoutubeBuscaComentariosOperator(
-                task_id=id_task,
-                ordem_extracao=YoutubeBuscaComentarioHook(
-                    carregar_dados=InfraPicke(
-                        camada_datalake='bronze',
-                        assunto=id_termo_assunto,
-                        pasta=None,
-                        metrica=None,
-                        nome_arquivo='id_videos_comentarios.pkl'
-                    )
-                ),
-                extracao_unica=InfraJson(
-                    camada_datalake='bronze',
-                    assunto=id_termo_assunto,
-                    pasta=data,
-                    metrica='comentarios',
-                    nome_arquivo='req_comentarios.json'
-
-                ),
-                extracao_manipulacao_dados=(InfraPicke(
-                    camada_datalake='bronze',
-                    assunto=id_termo_assunto,
-                    pasta=None,
-                    metrica=None,
-                    nome_arquivo='id_resposta_comentarios.pkl'
-                ), )
-
-
-            )
-            lista_task_comentarios.append(extracao_dados_comentario)
 
     task_fim = EmptyOperator(
         task_id='task_fim_dag',
