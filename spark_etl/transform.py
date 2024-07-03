@@ -169,3 +169,29 @@ def realizar_etl(spark: SparkSession, caminhos_datalake: List[Dict[str, str]]):
         dataframe = obter_hora(dataframe=dataframe)
         caminho_datalake['dataframe'] = dataframe
         save_parquet(**caminho_datalake)
+
+
+if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser(
+        description='Spark Youtube api'
+    )
+    # camada_datalake: str, extracao_data: str, metrica: str, arquivo_json: str
+    parser.add_argument('--camada_datalake', required=True)
+    parser.add_argument('--extracao_data', required=True)
+    parser.add_argument('--metrica', required=True)
+    parser.add_argument('--arquivo_json', required=True)
+    spark = SparkSession\
+        .builder\
+        .appName("twitter_transformation")\
+        .getOrCreate()
+    args = parser.parse_args()
+    caminhos_datalake = [
+        {
+            'camada_datalake': args.camada_datalake,
+            'extracao_data': args.extracao_data,
+            'metrica': args.metrica,
+            'arquivo_json': args.arquivo_json
+        }
+    ]
+    realizar_etl(spark=spark, caminhos_datalake=caminhos_datalake)
