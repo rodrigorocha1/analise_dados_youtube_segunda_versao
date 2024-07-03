@@ -4,11 +4,11 @@ from pyspark.sql import SparkSession, DataFrame
 import pyspark.sql.functions as f
 
 
-def abrir_dataframe(spark: SparkSession, camada_datalake: str, extracao_data: str, metrica: str, arquivo_json: str) -> DataFrame:
+def abrir_dataframe(spark: SparkSession, camada_datalake: str, assunto: str, extracao_data: str, metrica: str, arquivo_json: str) -> DataFrame:
     """Função para abrir o dataframe
 
     Args:
-        spark (SparkSession): Sessão Spark      
+        spark (SparkSession): Sessão Spark
         camada_datalake (str): Camada datalake (bronze, prata, ouro)
         extracao_data (str): diretório com a pasta com o nome da extração ex: extracao_data_2024_07_02_15_05_38
         metrica (str): métrica Ex. estatisticas_canais_brasileiros, estatistica videos
@@ -20,7 +20,9 @@ def abrir_dataframe(spark: SparkSession, camada_datalake: str, extracao_data: st
     CAMINHO_RAIZ = os.getcwd()
 
     dataframe = spark.read.json(os.path.join(
-        CAMINHO_RAIZ, 'datalake', camada_datalake, extracao_data, metrica, arquivo_json))
+        CAMINHO_RAIZ, 'datalake', camada_datalake, assunto, extracao_data, metrica, arquivo_json))
+    # dataframe = spark.read.json(
+    #     f'../datalake/{camada_datalake}/{assunto}/{extracao_data}/{metrica}/{arquivo_json}')
 
     return dataframe
 
@@ -136,7 +138,7 @@ def transform_estatisticas_videos_trends(df_trend_brazil: DataFrame) -> DataFram
     return df_trend_brazil
 
 
-def save_parquet(dataframe: DataFrame, assunto: str, extracao_data: str, metrica: str, nome_arquivo: str):
+def save_parquet(dataframe: DataFrame, camada_datalake: str, assunto: str, extracao_data: str, metrica: str, nome_arquivo_parquet: str):
     """Salvar o arquivo parquet na camada prata
 
     Args:
@@ -144,11 +146,15 @@ def save_parquet(dataframe: DataFrame, assunto: str, extracao_data: str, metrica
         assunto (str): assunto da pesquisa
         extracao_data (str): diretório com a pasta com o nome da extração ex: extracao_data_2024_07_02_15_05_38
         metrica (str): métrica Ex. estatisticas_canais_brasileiros, estatistica videos
-        nome_arquivo (str): nome do arquivo a ser salvo no parquet ex: teste.parquet
+        nome_arquivo_parquet (str): nome do arquivo a ser salvo no parquet ex: teste.parquet
     """
     CAMINHO_RAIZ = os.getcwd()
-    dataframe.toPandas().to_parquet(path=os.path.join(
-        CAMINHO_RAIZ, 'datalake', 'prata', assunto, extracao_data, metrica, nome_arquivo))
+    CAMINHO_DATALAKE_PRATA = os.path.join(
+        CAMINHO_RAIZ, 'datalake', camada_datalake, assunto, extracao_data, metrica)
+    os.makedirs(CAMINHO_DATALAKE_PRATA, exist_ok=True)
+    
+    dataframe.toPandas().to_parquet(
+        path=os.path.join(CAMINHO_DATALAKE_PRATA, nome_arquivo_parquet))
 
     # df_json.coalesce(1) \
     #     .write \
@@ -156,7 +162,7 @@ def save_parquet(dataframe: DataFrame, assunto: str, extracao_data: str, metrica
     #     .parquet(diretorio_salvar)
 
 
-def realizar_etl(spark: SparkSession, caminhos_datalake: List[Dict[str, str]]):
+def realizar_etl(spark: SparkSession, caminhos_datalake: List[Dict[str, str]], nome_arquivo_parquet: str):
 
     for caminho_datalake in caminhos_datalake:
         caminho_datalake['spark'] = spark
@@ -168,30 +174,43 @@ def realizar_etl(spark: SparkSession, caminhos_datalake: List[Dict[str, str]]):
 
         dataframe = obter_hora(dataframe=dataframe)
         caminho_datalake['dataframe'] = dataframe
+        caminho_datalake['camada_datalake'] = 'prata'
+        del caminho_datalake['spark']
+        del caminho_datalake['arquivo_json']
+        caminho_datalake['nome_arquivo_parquet'] = nome_arquivo_parquet
+        print(caminho_datalake)
         save_parquet(**caminho_datalake)
 
 
 if __name__ == '__main__':
-    import argparse
-    parser = argparse.ArgumentParser(
-        description='Spark Youtube api'
-    )
-    # camada_datalake: str, extracao_data: str, metrica: str, arquivo_json: str
-    parser.add_argument('--camada_datalake', required=True)
-    parser.add_argument('--extracao_data', required=True)
-    parser.add_argument('--metrica', required=True)
-    parser.add_argument('--arquivo_json', required=True)
+    # import argparse
+    # parser = argparse.ArgumentParser(
+    #     description='Spark Youtube api'
+    # )
+    # # camada_datalake: str, extracao_data: str, metrica: str, arquivo_json: str
+    # parser.add_argument('--camada_datalake', required=True)
+    # parser.add_argument('--extracao_data', required=True)
+    # parser.add_argument('--metrica', required=True)
+    # parser.add_argument('--arquivo_json', required=True)
     spark = SparkSession\
         .builder\
         .appName("twitter_transformation")\
         .getOrCreate()
-    args = parser.parse_args()
+    # args = parser.parse_args()
+    camada_datalake = 'bronze'
+    assunto = 'cities_skylines'
+    extracao_data = 'extracao_data_2024_06_29'
+    metrica = 'estatisticas_videos'
+    arquivo_json = 'req_estatisticas_videos.json'
+    nome_arquivo_parquet = 'req_estatisticas_videos.parquet'
     caminhos_datalake = [
         {
-            'camada_datalake': args.camada_datalake,
-            'extracao_data': args.extracao_data,
-            'metrica': args.metrica,
-            'arquivo_json': args.arquivo_json
+            'camada_datalake': camada_datalake,
+            'assunto': assunto,
+            'extracao_data': extracao_data,
+            'metrica': metrica,
+            'arquivo_json': arquivo_json
         }
     ]
-    realizar_etl(spark=spark, caminhos_datalake=caminhos_datalake)
+    realizar_etl(spark=spark, caminhos_datalake=caminhos_datalake,
+                 nome_arquivo_parquet=nome_arquivo_parquet)
