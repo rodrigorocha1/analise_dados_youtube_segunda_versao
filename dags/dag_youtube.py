@@ -10,6 +10,8 @@ from unidecode import unidecode
 from airflow.operators.empty import EmptyOperator
 from airflow.models import DAG
 from airflow.utils.task_group import TaskGroup
+from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
+
 
 from src.dados.infra_json import InfraJson
 from src.dados.infra_pickle import InfraPicke
@@ -25,8 +27,8 @@ from hook.youtube_busca_pesquisa_hook import YoutubeBuscaPesquisaHook
 data_hora_atual = pendulum.now('America/Sao_Paulo').to_iso8601_string()
 data_hora_atual = pendulum.parse(data_hora_atual)
 data_hora_busca = data_hora_atual.subtract(hours=7)
-data_hora_busca = data_hora_busca.strftime('%Y-%m-%dT%H:%M:%SZ')
-data = 'extracao_data_' + data_hora_busca.split('T')[0].replace('-', '_')
+data_hora_busca = data_hora_busca.format('YYYY_MM_DD_HH_mm_ss')
+data = f'extracao_data_{data_hora_busca}'
 
 
 with DAG(
@@ -150,7 +152,7 @@ with DAG(
         task_id='task_fim_dag',
         dag=dag
     )
-task_inicio >> tg1 >> tg2 >> tg3 >> tg4 >> task_fim
+task_inicio >> tg1 >> tg2 >> tg3 >> task_fim
 
 
 # task_inicio >> transform_spark_submit >> task_fim
