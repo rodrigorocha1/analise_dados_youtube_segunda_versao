@@ -11,7 +11,7 @@ from airflow.operators.empty import EmptyOperator
 from airflow.models import DAG
 from airflow.utils.task_group import TaskGroup
 from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
-
+from airflow.providers.common.sql.operators.sql import SQLExecuteQueryOperator
 
 from src.dados.infra_json import InfraJson
 from src.dados.infra_pickle import InfraPicke
