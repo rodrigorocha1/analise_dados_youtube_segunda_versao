@@ -58,7 +58,6 @@ def transformar_estatisticas_canais(dataframe: DataFrame) -> DataFrame:
     ).withColumn('HORA', f.hour('data_extracao')) \
         .select(
         f.col('data_extracao').alias('DATA_EXTRACAO'),
-        f.col('TURNO_EXTRACAO'),
         f.col('HORA'),
         f.col('item.id').alias('ID'),
         f.col('item.snippet.title').alias('NM_CANAL'),
@@ -79,23 +78,30 @@ def transform_estatisticas_videos(df_video_json: DataFrame) -> DataFrame:
     Returns:
         DataFrame: Dataframe
     """
-    df_video_json = df_video_json.withColumn('HORA', f.hour('data_extracao')).select(
-        'data_extracao',
+    df_video_json = df_video_json.select(f.explode('items').alias('items')) \
+        .select(
         f.col('items.id').alias('ID_VIDEO'),
-        f.col('items.snippet.publishedAt').alias('DATA_PUBLICACAO'),
-        f.col('HORA'),
         f.col('items.snippet.channelId').alias('ID_CANAL'),
-        f.col('items.snippet.channelTitle').alias('NM_CANAL'),
-        f.col('items.snippet.categoryId').alias('ID_CATEGORIA'),
         f.col('items.snippet.title').alias('TITULO_VIDEO'),
         f.col('items.snippet.description').alias('DESCRICAO'),
+        f.col('items.contentDetails.duration').alias('DURACAO'),
         f.col('items.snippet.tags').alias('TAGS'),
-        f.col('items.contentDetails.duration').alias('DURACAO_VIDEOS'),
+
+        f.col('items.snippet.categoryid').alias('ID_CATEGORIA'),
         f.col('items.statistics.viewCount').alias('TOTAL_VISUALIZACOES'),
         f.col('items.statistics.likeCount').alias('TOTAL_LIKES'),
         f.col('items.statistics.favoriteCount').alias('TOTAL_FAVORITOS'),
-        f.col('items.statistics.commentCount').alias('TOTAL_COMENTARIOS'),
     )
+
+    df_video_json = df_video_json.withColumn('TOTAL_TAGS', f.when(
+        f.size(df_video_json.TAGS) <= 0, 0).otherwise(f.size(df_video_json.TAGS)))
+    df_video_json = df_video_json.withColumn(
+        'TOTAL_PALAVRAS_TITULO', f.size(f.split(df_video_json.TITULO_VIDEO, " ")))
+    df_video_json = df_video_json.withColumn(
+        'TOTAL_PALAVRAS_DESCRICAO', f.size(f.split(df_video_json.DESCRICAO, " ")))
+
+    df_video_json = df_video_json.withColumn('HORA', f.hour('data_extracao'))
+    df_video_json = obter_hora(df_video_json)
     return df_video_json
 
 
@@ -152,7 +158,7 @@ def save_parquet(dataframe: DataFrame, camada_datalake: str, assunto: str, extra
     CAMINHO_DATALAKE_PRATA = os.path.join(
         CAMINHO_RAIZ, 'datalake', camada_datalake, assunto, extracao_data, metrica)
     os.makedirs(CAMINHO_DATALAKE_PRATA, exist_ok=True)
-    
+
     dataframe.toPandas().to_parquet(
         path=os.path.join(CAMINHO_DATALAKE_PRATA, nome_arquivo_parquet))
 
@@ -197,12 +203,29 @@ if __name__ == '__main__':
         .appName("twitter_transformation")\
         .getOrCreate()
     # args = parser.parse_args()
+    # camada_datalake = 'bronze'
+    # assunto = 'cities_skylines'
+    # extracao_data = 'extracao_data_2024_06_29'
+    # metrica = 'estatisticas_videos'
+    # arquivo_json = 'req_estatisticas_videos.json'
+    # nome_arquivo_parquet = 'req_estatisticas_videos.parquet'
+    # caminhos_datalake = [
+    #     {
+    #         'camada_datalake': camada_datalake,
+    #         'assunto': assunto,
+    #         'extracao_data': extracao_data,
+    #         'metrica': metrica,
+    #         'arquivo_json': arquivo_json
+    #     }
+    # ]
+    # realizar_etl(spark=spark, caminhos_datalake=caminhos_datalake,
+    #              nome_arquivo_parquet=nome_arquivo_parquet)
     camada_datalake = 'bronze'
     assunto = 'cities_skylines'
     extracao_data = 'extracao_data_2024_06_29'
-    metrica = 'estatisticas_videos'
-    arquivo_json = 'req_estatisticas_videos.json'
-    nome_arquivo_parquet = 'req_estatisticas_videos.parquet'
+    metrica = 'estatisticas_canais_brasileiros'
+    arquivo_json = 'req_estatisticas_canais_brasileiros.json'
+    nome_arquivo_parquet = 'req_estatisticas_canais_brasileiros.parquet'
     caminhos_datalake = [
         {
             'camada_datalake': camada_datalake,
