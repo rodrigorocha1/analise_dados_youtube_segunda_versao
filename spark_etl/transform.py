@@ -1,3 +1,4 @@
+import pendulum
 import argparse
 from typing import Tuple
 from pyspark.sql import SparkSession, DataFrame
@@ -68,37 +69,54 @@ def fazer_tratamento_video(dataframe: DataFrame) -> DataFrame:
     return dataframe
 
 
-def salvar_dados_particionados(dataframe: DataFrame, caminho: str, nm_arquivo: str, particoes: Tuple[str]):
-    dataframe = dataframe.toPandas()
+def salvar_dados_particionados(dataframe: DataFrame, caminho_completo: str, particoes: Tuple[str]):
+
     with duckdb.connect() as con:
-        con.execute(f"""
-            COPY (SELECT * FROM {dataframe})
-            TO {os.path.join(caminho, nm_arquivo)}
-            (FORMAT PARQUET, PARTITION_BY {particoes})
-        """)
+        dataframe = dataframe.toPandas()
+        print(dataframe.head())
+        sql = f"""
+                COPY (SELECT * FROM dataframe)
+                TO "{caminho_completo}"
+                (FORMAT PARQUET, PARTITION_BY "{particoes}")
+            """
+        print(sql)
+        con.execute(sql)
 
 
 if __name__ == "__main__":
+    print('______iniciando______________')
+    caminho_base = os.getcwd()
     parser = argparse.ArgumentParser(
         description='ETL YOUTUBE')
-    parser.add_argument('--opcao', type=int, required=True,
+    parser.add_argument('--opcao', type=str, required=True,
                         help='Opcao para obter a métrica')
     parser.add_argument('--caminho_arquivo', type=str, required=True,
                         help='camihno do arquivo')
 
     args = parser.parse_args()
 
-    spark = SparkSession.builder
-    .appName("criar_dataframe")
-    .getOrCreate()
+    spark = SparkSession.builder.appName("criar_dataframe").getOrCreate()
 
-    dataframe = abrir_dataframe(spark, args.caminho_arquivo)
+    dataframe = abrir_dataframe(
+        spark, args.caminho_arquivo)
 
-    if args.opcao == 1:
+    if args.opcao == '1':
         dataframe = fazer_tratamento_canais(dataframe)
-        particoes = []
+        caminho_arquivo = os.path.join(
+            caminho_base, 'datalake', 'prata', 'estatisticas_canais')
+        nome_arquivo = 'estatisticas_canais.parquet'
+
+        particoes = ("ASSUNTO")
+
     else:
         dataframe = fazer_tratamento_video(dataframe)
-        particoes = []
-
+        caminho_arquivo = os.path.join(
+            caminho_base, 'prata', 'estatisticas_canais')
+        particoes = ('ASSUNTO')
+        nome_arquivo = 'estatisticas_videos.parquet'
+    caminho_completo = os.path.join(caminho_arquivo, nome_arquivo)
+    os.makedirs(caminho_arquivo, exist_ok=True)
+    print(caminho_completo)
+    salvar_dados_particionados(
+        dataframe=dataframe, caminho_completo=caminho_completo, particoes=particoes)
     spark.stop()
