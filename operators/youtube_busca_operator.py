@@ -35,6 +35,7 @@ class YoutubeBuscaOperator(YoutubeOperator):
 
     def gravar_dados(self, req: Dict):
         if len(req['items']) > 0:
+            req['assunto_pesquisa'] = self._termo_pesquisa
             self._extracao_manipulacao_dados[0].salvar_dados(req=req)
             lista_de_videos = self.dados_youtube.obter_lista_videos(req)
             self._extracao_manipulacao_dados[1].salvar_dados(
