@@ -1,32 +1,37 @@
-import pendulum
+import argparse
 from pyspark.sql import SparkSession
-from pyspark.sql import DataFrame
-from pyspark.sql import SparkSession, functions
-from pyspark import SparkConf, SparkContext
 
 
-def criar_dataframe(spark: SparkSession) -> DataFrame:
+def criar_dataframe(spark: SparkSession, teste: int):
     dados = [
         {"nome": "Alice", "idade": 30, "cidade": "São Paulo"},
         {"nome": "Bob", "idade": 25, "cidade": "Rio de Janeiro"},
         {"nome": "Charlie", "idade": 35, "cidade": "Belo Horizonte"}
     ]
 
-    print('dentro da ')
-    # Inicializar a sessão Spark
-    print(dados)
+    print('Criando o DataFrame com os dados fornecidos')
 
-    # Criar o DataFrame
     df = spark.createDataFrame(dados)
 
-    print(df)
-    return df
+    print('DataFrame criado. Salvando em formato Parquet...')
+
+    df.write.parquet('teste.parquet')
+
+    print('Arquivo Parquet salvo com sucesso')
 
 
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description='Script para criar DataFrame e salvar em Parquet')
+    parser.add_argument('--teste', type=int, required=True,
+                        help='Parâmetro de teste')
 
-spark = SparkSession(SparkContext(conf=SparkConf()).getOrCreate())
+    args = parser.parse_args()
 
-print('dentro de main etl')
-df = criar_dataframe(spark=spark)
-df.write.parquet('teste.parquet')
-print(df)
+    spark = SparkSession.builder \
+        .appName("criar_dataframe") \
+        .getOrCreate()
+
+    criar_dataframe(spark, args.teste)
+
+    spark.stop()

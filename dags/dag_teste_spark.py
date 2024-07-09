@@ -1,6 +1,5 @@
 from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
 from airflow.models import DAG
-
 import pendulum
 
 with DAG(
@@ -13,7 +12,9 @@ with DAG(
         task_id='spark',
         conn_id='spark',
         application="/home/rodrigo/Documentos/projetos/analise_dados_youtube_segunda_versao/spark_etl/transform_teste.py",
-
+        name="criar_dataframe",
+        application_args=['--teste', '1'],
+        verbose=True,
     )
 
     teste_spark
