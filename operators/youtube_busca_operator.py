@@ -17,25 +17,25 @@ class YoutubeBuscaOperator(YoutubeOperator):
         'ordem_extracao'
     ]
 
-    def __init__(self, termo_pesquisa: str, ordem_extracao: YoutubeHook, extracao_manipulacao_dados: Tuple[IInfraDados], extracao_unica: IInfraDados = None, **kwargs):
-        """__init__ para Instanciar a busca de assunto
+    def __init__(self, ordem_extracao: YoutubeHook, extracao_manipulacao_dados: Tuple[IInfraDados], assunto: str, extracao_unica: IInfraDados = None, **kwargs):
+        """_summary_
+
 
         Args:
             termo_pesquisa (str): assunto de pesquisa
             ordem_extracao (YoutubeHook): Recebe um Hook
             extracao_manipulacao_dados (Tuple[IInfraDados]): Recebe uma tupla de infra estrutura Carregar // Salvar
             extracao_unica (IInfraDados, optional): Extração unica. Defaults to None.
+            assunto (str): assunto_pesquisa
+
         """
-        self._termo_pesquisa = termo_pesquisa
-        super().__init__(
-            ordem_extracao=ordem_extracao,
-            extracao_manipulacao_dados=extracao_manipulacao_dados,
-            extracao_unica=extracao_unica, **kwargs
-        )
+
+        super().__init__(ordem_extracao=ordem_extracao, extracao_manipulacao_dados=extracao_manipulacao_dados,
+                         assunto=assunto, extracao_unica=extracao_unica, **kwargs)
 
     def gravar_dados(self, req: Dict):
         if len(req['items']) > 0:
-            req['assunto_pesquisa'] = self._termo_pesquisa
+            req['assunto'] = self._assunto
             self._extracao_manipulacao_dados[0].salvar_dados(req=req)
             lista_de_videos = self.dados_youtube.obter_lista_videos(req)
             self._extracao_manipulacao_dados[1].salvar_dados(

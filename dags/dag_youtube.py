@@ -65,6 +65,7 @@ with DAG(
             id_task = f'id_youtube_api_historico_pesquisa_{id_termo_assunto}'
             extracao_api_youtube_historico_pesquisa = YoutubeBuscaOperator(
                 task_id=id_task,
+                assunto=id_termo_assunto,
                 ordem_extracao=YoutubeBuscaPesquisaHook(
                     consulta=termo_assunto,
                     data_inicio=data_hora_busca
@@ -92,7 +93,6 @@ with DAG(
                         nome_arquivo='id_canais.pkl'
                     )
                 ),
-                termo_pesquisa=termo_assunto
             )
         lista_task_historico.append(
             extracao_api_youtube_historico_pesquisa
@@ -105,6 +105,7 @@ with DAG(
                 termo_assunto.lower().replace(' ', '_'))
             id_task = f'id_youtube_api_dados_canais_{id_termo_assunto}'
             extracao_youtube_canais = YoutubeBuscaCanaisOperator(
+                assunto=id_termo_assunto,
                 task_id=id_task,
                 extracao_manipulacao_dados=None,
                 extracao_unica=InfraJson(
@@ -136,6 +137,7 @@ with DAG(
             id_task = f'id_youtube_api_dados_video_{id_termo_assunto}'
             extracao_dados_video = YoutubeBuscaVideoOperator(
                 task_id=id_task,
+                assunto=id_termo_assunto,
                 extracao_manipulacao_dados=(InfraPicke(
                     camada_datalake='bronze',
                     assunto=id_termo_assunto,
@@ -169,5 +171,5 @@ with DAG(
     )
 task_inicio >> tg1 >> tg2 >> tg3 >> task_fim
 
-
-task_inicio >> transform_spark_submit >> task_fim
+# task_inicio >> tg2 >> task_fim
+# task_inicio >> transform_spark_submit >> task_fim

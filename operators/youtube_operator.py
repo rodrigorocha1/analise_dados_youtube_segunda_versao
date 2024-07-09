@@ -19,12 +19,15 @@ class YoutubeOperator(BaseOperator, ABC):
         self,
             ordem_extracao: YoutubeHook,
             extracao_manipulacao_dados: Tuple[IInfraDados],
+            assunto: str,
             extracao_unica: IInfraDados = None,
             **kwargs,
     ):
         self._extracao_manipulacao_dados = extracao_manipulacao_dados
         self._extracao_unica = extracao_unica
         self.ordem_extracao = ordem_extracao
+        self._assunto = assunto
+
         self.dados_youtube = DadosYoutube()
 
         super().__init__(**kwargs)
