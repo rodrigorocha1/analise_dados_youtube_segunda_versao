@@ -26,7 +26,7 @@ def fazer_tratamento_canais(dataframe: DataFrame) -> DataFrame:
     ).select(
         F.col('assunto').alias('ASSUNTO'),
         F.col('data_extracao').alias('DATA_EXTRACAO'),
-        F.hour('data_extracao').alias('ANO_EXTRACAO'),
+        F.year('data_extracao').alias('ANO_EXTRACAO'),
         F.month('data_extracao').alias('MES_EXTRACAO'),
         F.dayofmonth('data_extracao').alias('DIA_EXTRACAO'),
         obter_turno(F.col('data_extracao')).alias('TURNO_EXTRACAO'),
@@ -44,7 +44,7 @@ def fazer_tratamento_video(dataframe: DataFrame) -> DataFrame:
         .select(
         F.col('assunto').alias('ASSUNTO'),
         F.col('data_extracao').alias('DATA_EXTRACAO'),
-        F.hour('data_extracao').alias('ANO_EXTRACAO'),
+        F.year('data_extracao').alias('ANO_EXTRACAO'),
         F.month('data_extracao').alias('MES_EXTRACAO'),
         F.dayofmonth('data_extracao').alias('DIA_EXTRACAO'),
         obter_turno(F.col('data_extracao')).alias('TURNO_EXTRACAO'),
@@ -73,11 +73,10 @@ def salvar_dados_particionados(dataframe: DataFrame, caminho_completo: str, part
 
     with duckdb.connect() as con:
         dataframe = dataframe.toPandas()
-        print(dataframe.head())
         sql = f"""
                 COPY (SELECT * FROM dataframe)
                 TO "{caminho_completo}"
-                (FORMAT PARQUET, PARTITION_BY "{particoes}")
+                (FORMAT PARQUET, PARTITION_BY {particoes})
             """
         print(sql)
         con.execute(sql)
@@ -86,27 +85,26 @@ def salvar_dados_particionados(dataframe: DataFrame, caminho_completo: str, part
 if __name__ == "__main__":
     print('______iniciando______________')
     caminho_base = os.getcwd()
-    parser = argparse.ArgumentParser(
-        description='ETL YOUTUBE')
-    parser.add_argument('--opcao', type=str, required=True,
-                        help='Opcao para obter a métrica')
-    parser.add_argument('--caminho_arquivo', type=str, required=True,
-                        help='camihno do arquivo')
-
-    args = parser.parse_args()
-
+    # parser = argparse.ArgumentParser(
+    #     description='ETL YOUTUBE')
+    # parser.add_argument('--opcao', type=str, required=True,
+    #                     help='Opcao para obter a métrica')
+    # parser.add_argument('--caminho_arquivo', type=str, required=True,
+    #                     help='camihno do arquivo')
+    # args = parser.parse_args()
+    # caminho_arquivo = args.caminho_arquivo
+    # opcao = args.opcao
+    caminho_arquivo = '/home/rodrigo/Documentos/projetos/analise_dados_youtube_segunda_versao/datalake/bronze/*/extracao_data_2024_07_09_tarde/estatisticas_canais_brasileiros/req_estatisticas_canais_brasileiros.json'
+    opcao = '1'
     spark = SparkSession.builder.appName("criar_dataframe").getOrCreate()
-
     dataframe = abrir_dataframe(
-        spark, args.caminho_arquivo)
-
-    if args.opcao == '1':
+        spark, caminho_arquivo)
+    if opcao == '1':
         dataframe = fazer_tratamento_canais(dataframe)
         caminho_arquivo = os.path.join(
             caminho_base, 'datalake', 'prata', 'estatisticas_canais')
         nome_arquivo = 'estatisticas_canais.parquet'
-
-        particoes = ("ASSUNTO")
+        particoes = "ASSUNTO", "ANO_EXTRACAO", "MES_EXTRACAO", "DIA_EXTRACAO", "TURNO_EXTRACAO", "ID_CANAL"
 
     else:
         dataframe = fazer_tratamento_video(dataframe)
