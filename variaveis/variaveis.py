@@ -19,7 +19,7 @@ load_dotenv()
 
 
 lista_assunto = [
-    'Cities Skylines', 'Linux'
+    'Cities Skylines', 'Linux', 'Apache Airflow', 'genshin impact', 'Euro Truck Simulator'
 ]
 
 

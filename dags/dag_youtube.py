@@ -33,7 +33,7 @@ def obter_turno_pasta(hora: int) -> str:
     elif 12 <= hora < 18:
         turno = 'tarde'
     else:
-        turno = 'noite'
+        turno = 'tarde'
     return turno
 
 
@@ -48,7 +48,7 @@ data = f'extracao_data_{data}_{obter_turno_pasta(hora_atual)}'
 
 with DAG(
     dag_id='extracao_youtube',
-    schedule_interval=None,
+    schedule_interval='0 11,17,22 * * *',
     catchup=False,
     start_date=pendulum.datetime(2023, 9, 8, tz='America/Sao_Paulo')
 ) as dag:

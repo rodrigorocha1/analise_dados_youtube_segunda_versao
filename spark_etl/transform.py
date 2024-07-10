@@ -70,16 +70,7 @@ def fazer_tratamento_video(dataframe: DataFrame) -> DataFrame:
 
 
 def salvar_dados_particionados(dataframe: DataFrame, caminho_completo: str, particoes: Tuple[str]):
-
-    with duckdb.connect() as con:
-        dataframe = dataframe.toPandas()
-        sql = f"""
-                COPY (SELECT * FROM dataframe)
-                TO "{caminho_completo}"
-                (FORMAT PARQUET, PARTITION_BY {particoes})
-            """
-        print(sql)
-        con.execute(sql)
+    dataframe.write.partitionBy(particoes).parquet(caminho_completo)
 
 
 if __name__ == "__main__":
@@ -104,7 +95,7 @@ if __name__ == "__main__":
         caminho_arquivo = os.path.join(
             caminho_base, 'datalake', 'prata', 'estatisticas_canais')
         nome_arquivo = 'estatisticas_canais.parquet'
-        particoes = "ASSUNTO", "ANO_EXTRACAO", "MES_EXTRACAO", "DIA_EXTRACAO", "TURNO_EXTRACAO", "ID_CANAL"
+        particoes = "ASSUNTO", "ANO_EXTRACAO", "MES_EXTRACAO", "DIA_EXTRACAO", "TURNO_EXTRACAO"
 
     else:
         dataframe = fazer_tratamento_video(dataframe)
