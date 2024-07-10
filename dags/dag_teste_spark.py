@@ -11,9 +11,9 @@ with DAG(
     teste_spark = SparkSubmitOperator(
         task_id='spark',
         conn_id='spark',
-        application="/home/rodrigo/Documentos/projetos/analise_dados_youtube_segunda_versao/spark_etl/transform_teste.py",
-        name="criar_dataframe",
-        application_args=['--teste', '1'],
+        application="/home/rodrigo/Documentos/projetos/analise_dados_youtube_segunda_versao/spark_etl/transform.py",
+        application_args=['--opcao', '2', '--caminho_arquivo',
+                          '/home/rodrigo/Documentos/projetos/analise_dados_youtube_segunda_versao/datalake/bronze/*/extracao_data_2024_07_09_tarde/estatisticas_videos/req_estatisticas_videos.json'],
         verbose=True,
     )
 

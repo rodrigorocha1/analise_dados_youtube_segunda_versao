@@ -85,17 +85,17 @@ def salvar_dados_particionados(dataframe: DataFrame, caminho_completo: str, part
 if __name__ == "__main__":
     print('______iniciando______________')
     caminho_base = os.getcwd()
-    # parser = argparse.ArgumentParser(
-    #     description='ETL YOUTUBE')
-    # parser.add_argument('--opcao', type=str, required=True,
-    #                     help='Opcao para obter a métrica')
-    # parser.add_argument('--caminho_arquivo', type=str, required=True,
-    #                     help='camihno do arquivo')
-    # args = parser.parse_args()
-    # caminho_arquivo = args.caminho_arquivo
-    # opcao = args.opcao
-    caminho_arquivo = '/home/rodrigo/Documentos/projetos/analise_dados_youtube_segunda_versao/datalake/bronze/*/extracao_data_2024_07_09_tarde/estatisticas_canais_brasileiros/req_estatisticas_canais_brasileiros.json'
-    opcao = '1'
+    parser = argparse.ArgumentParser(
+        description='ETL YOUTUBE')
+    parser.add_argument('--opcao', type=str, required=True,
+                        help='Opcao para obter a métrica')
+    parser.add_argument('--caminho_arquivo', type=str, required=True,
+                        help='camihno do arquivo')
+    args = parser.parse_args()
+    caminho_arquivo = args.caminho_arquivo
+    opcao = args.opcao
+    # caminho_arquivo = '/home/rodrigo/Documentos/projetos/analise_dados_youtube_segunda_versao/datalake/bronze/*/extracao_data_2024_07_09_tarde/estatisticas_canais_brasileiros/req_estatisticas_canais_brasileiros.json'
+    # opcao = '1'
     spark = SparkSession.builder.appName("criar_dataframe").getOrCreate()
     dataframe = abrir_dataframe(
         spark, caminho_arquivo)
@@ -109,8 +109,8 @@ if __name__ == "__main__":
     else:
         dataframe = fazer_tratamento_video(dataframe)
         caminho_arquivo = os.path.join(
-            caminho_base, 'prata', 'estatisticas_canais')
-        particoes = ('ASSUNTO')
+            caminho_base, 'datalake', 'prata', 'estatisticas_videos')
+        particoes = "ASSUNTO", "ANO_EXTRACAO", "MES_EXTRACAO", "DIA_EXTRACAO", "TURNO_EXTRACAO", "ID_CANAL", "ID_VIDEO"
         nome_arquivo = 'estatisticas_videos.parquet'
     caminho_completo = os.path.join(caminho_arquivo, nome_arquivo)
     os.makedirs(caminho_arquivo, exist_ok=True)
