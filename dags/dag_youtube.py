@@ -169,7 +169,27 @@ with DAG(
         task_id='task_fim_dag',
         dag=dag
     )
-task_inicio >> tg1 >> tg2 >> tg3 >> task_fim
+
+    transformacao_dados_canais = SparkSubmitOperator(
+        task_id='spark_transformacao_dados_canais',
+        conn_id='spark',
+        application="/home/rodrigo/Documentos/projetos/analise_dados_youtube_segunda_versao/spark_etl/transform.py",
+        application_args=['--opcao', '1', '--caminho_arquivo',
+                          f'/home/rodrigo/Documentos/projetos/analise_dados_youtube_segunda_versao/datalake/bronze/*/{data}/estatisticas_canais_brasileiros/req_estatisticas_canais_brasileiros.json'],
+
+    )
+
+    transformacao_dados_videos = SparkSubmitOperator(
+        task_id='spark_transformacao_dados_videos',
+        conn_id='spark',
+        application="/home/rodrigo/Documentos/projetos/analise_dados_youtube_segunda_versao/spark_etl/transform.py",
+        application_args=['--opcao', '2', '--caminho_arquivo',
+                          f'/home/rodrigo/Documentos/projetos/analise_dados_youtube_segunda_versao/datalake/bronze/*/{data}/estatisticas_videos/req_estatisticas_videos.json'],
+
+    )
+
+
+task_inicio >> tg1 >> tg2 >> tg3 >> transformacao_dados_canais >> transformacao_dados_videos >> task_fim
 
 # task_inicio >> tg2 >> task_fim
 # task_inicio >> transform_spark_submit >> task_fim
