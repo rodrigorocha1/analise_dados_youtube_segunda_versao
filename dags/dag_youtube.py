@@ -11,8 +11,6 @@ from airflow.operators.empty import EmptyOperator
 from airflow.models import DAG
 from airflow.utils.task_group import TaskGroup
 from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
-from airflow.providers.common.sql.operators.sql import SQLExecuteQueryOperator
-
 from src.dados.infra_json import InfraJson
 from src.dados.infra_pickle import InfraPicke
 from variaveis.variaveis import lista_assunto
@@ -33,7 +31,7 @@ def obter_turno_pasta(hora: int) -> str:
     elif 12 <= hora < 18:
         turno = 'tarde'
     else:
-        turno = 'tarde'
+        turno = 'noite'
     return turno
 
 
@@ -41,14 +39,15 @@ data_hora_atual = pendulum.now('America/Sao_Paulo').to_iso8601_string()
 data_hora_atual = pendulum.parse(data_hora_atual)
 hora_atual = int(data_hora_atual.hour)
 data = data_hora_atual.format('YYYY_MM_DD')
-data_hora_busca = data_hora_atual.subtract(hours=7)
+data_hora_busca = data_hora_atual.subtract(hours=6)
 data_hora_busca = data_hora_busca.strftime('%Y-%m-%dT%H:%M:%SZ')
 data = f'extracao_data_{data}_{obter_turno_pasta(hora_atual)}'
 
 
 with DAG(
     dag_id='extracao_youtube',
-    schedule_interval='0 11,17,22 * * *',
+    # schedule_interval='0 11,17,22 * * *',
+    schedule_interval=None,
     catchup=False,
     start_date=pendulum.datetime(2023, 9, 8, tz='America/Sao_Paulo')
 ) as dag:

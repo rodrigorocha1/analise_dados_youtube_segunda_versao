@@ -13,8 +13,9 @@ def abrir_dataframe(spark: SparkSession, caminho: str) -> DataFrame:
 
 
 def obter_turno(data_extracao_col: F.col):
-    return F.when((F.hour(data_extracao_col) >= 0) & (F.hour(data_extracao_col) < 8), 'Manhã') \
-            .when((F.hour(data_extracao_col) >= 8) & (F.hour(data_extracao_col) < 16), 'Tarde') \
+    return F.when((F.hour(data_extracao_col) >= 0) & (F.hour(data_extracao_col) < 6), 'Madrugada') \
+            .when((F.hour(data_extracao_col) >= 6) & (F.hour(data_extracao_col) < 12), 'Manhã') \
+            .when((F.hour(data_extracao_col) >= 12) & (F.hour(data_extracao_col) < 18), 'Tarde') \
             .otherwise('Noite')
 
 
