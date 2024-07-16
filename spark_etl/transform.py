@@ -71,25 +71,27 @@ def fazer_tratamento_video(dataframe: DataFrame) -> DataFrame:
 
 
 def salvar_dados_particionados(dataframe: DataFrame, caminho_completo: str, particoes: Tuple[str]):
+    print(dataframe.show())
     dataframe.write.mode("overwrite").partitionBy(
         particoes).parquet(caminho_completo)
 
 
-if __name__ == "__main)__":
+if __name__ == "__main__":
     print('______iniciando______________')
     caminho_base = os.getcwd()
-    parser = argparse.ArgumentParser(
-        description='ETL YOUTUBE')
-    parser.add_argument('--opcao', type=str, required=True,
-                        help='Opcao para obter a métrica')
-    parser.add_argument('--caminho_arquivo', type=str, required=True,
-                        help='camihno do arquivo')
-    args = parser.parse_args()
-    caminho_arquivo = args.caminho_arquivo
-    opcao = args.opcao
-    # caminho_arquivo = '/home/rodrigo/Documentos/projetos/analise_dados_youtube_segunda_versao/datalake/bronze/*/extracao_data_2024_07_09_tarde/estatisticas_canais_brasileiros/req_estatisticas_canais_brasileiros.json'
-    # opcao = '1'
+    # parser = argparse.ArgumentParser(
+    #     description='ETL YOUTUBE')
+    # parser.add_argument('--opcao', type=str, required=True,
+    #                     help='Opcao para obter a métrica')
+    # parser.add_argument('--caminho_arquivo', type=str, required=True,
+    #                     help='camihno do arquivo')
+    # args = parser.parse_args()
+    # caminho_arquivo = args.caminho_arquivo
+    # opcao = args.opcao
+    caminho_arquivo = '/home/rodrigo/Documentos/projetos/analise_dados_youtube_segunda_versao/datalake/bronze/*/extracao_data_2024_07_15_noite/estatisticas_canais_brasileiros/req_estatisticas_canais_brasileiros.json'
+    opcao = 'C'
     spark = SparkSession.builder.appName("criar_dataframe").getOrCreate()
+
     dataframe = abrir_dataframe(
         spark, caminho_arquivo)
     if opcao == 'C':
@@ -107,7 +109,7 @@ if __name__ == "__main)__":
         nome_arquivo = 'estatisticas_videos.parquet'
     caminho_completo = os.path.join(caminho_arquivo, nome_arquivo)
     os.makedirs(caminho_arquivo, exist_ok=True)
-    print(caminho_completo)
+    print(dataframe.show())
     salvar_dados_particionados(
         dataframe=dataframe, caminho_completo=caminho_completo, particoes=particoes)
     spark.stop()
