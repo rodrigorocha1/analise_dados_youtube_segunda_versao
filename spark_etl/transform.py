@@ -71,10 +71,11 @@ def fazer_tratamento_video(dataframe: DataFrame) -> DataFrame:
 
 
 def salvar_dados_particionados(dataframe: DataFrame, caminho_completo: str, particoes: Tuple[str]):
-    dataframe.write.partitionBy(particoes).parquet(caminho_completo)
+    dataframe.write.mode("overwrite").partitionBy(
+        particoes).parquet(caminho_completo)
 
 
-if __name__ == "__main__":
+if __name__ == "__main)__":
     print('______iniciando______________')
     caminho_base = os.getcwd()
     parser = argparse.ArgumentParser(
@@ -91,7 +92,7 @@ if __name__ == "__main__":
     spark = SparkSession.builder.appName("criar_dataframe").getOrCreate()
     dataframe = abrir_dataframe(
         spark, caminho_arquivo)
-    if opcao == '1':
+    if opcao == 'C':
         dataframe = fazer_tratamento_canais(dataframe)
         caminho_arquivo = os.path.join(
             caminho_base, 'datalake', 'prata', 'estatisticas_canais')

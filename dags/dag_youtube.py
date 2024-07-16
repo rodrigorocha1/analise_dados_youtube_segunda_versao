@@ -39,15 +39,15 @@ data_hora_atual = pendulum.now('America/Sao_Paulo').to_iso8601_string()
 data_hora_atual = pendulum.parse(data_hora_atual)
 hora_atual = int(data_hora_atual.hour)
 data = data_hora_atual.format('YYYY_MM_DD')
-data_hora_busca = data_hora_atual.subtract(hours=6)
+data_hora_busca = data_hora_atual.subtract(hours=7)
 data_hora_busca = data_hora_busca.strftime('%Y-%m-%dT%H:%M:%SZ')
 data = f'extracao_data_{data}_{obter_turno_pasta(hora_atual)}'
 
-
+# Adicionar turno extração Turno Extração
 with DAG(
     dag_id='extracao_youtube',
-    # schedule_interval='0 11,17,22 * * *',
-    schedule_interval=None,
+    schedule_interval='0 11,17,22 * * *',
+    # schedule_interval=None,
     catchup=False,
     start_date=pendulum.datetime(2023, 9, 8, tz='America/Sao_Paulo')
 ) as dag:
@@ -173,22 +173,25 @@ with DAG(
         task_id='spark_transformacao_dados_canais',
         conn_id='spark',
         application="/home/rodrigo/Documentos/projetos/analise_dados_youtube_segunda_versao/spark_etl/transform.py",
-        application_args=['--opcao', '1', '--caminho_arquivo',
-                          f'/home/rodrigo/Documentos/projetos/analise_dados_youtube_segunda_versao/datalake/bronze/*/{data}/estatisticas_canais_brasileiros/req_estatisticas_canais_brasileiros.json'],
+        application_args=['--opcao', 'C', '--caminho_arquivo',
+                          str(f'/home/rodrigo/Documentos/projetos/analise_dados_youtube_segunda_versao/datalake/bronze/*/{data}/estatisticas_canais_brasileiros/req_estatisticas_canais_brasileiros.json')],
 
     )
+    for i in range(1, 2):
+        transformacao_dados_videos = SparkSubmitOperator(
+            task_id='spark_transformacao_dados_videos',
+            conn_id='spark',
+            application="/home/rodrigo/Documentos/projetos/analise_dados_youtube_segunda_versao/spark_etl/transform.py",
+            application_args=['--opcao', 'V', '--caminho_arquivo',
+                              str(f'/home/rodrigo/Documentos/projetos/analise_dados_youtube_segunda_versao/datalake/bronze/*/{data}/estatisticas_videos/req_estatisticas_videos.json')],
 
-    transformacao_dados_videos = SparkSubmitOperator(
-        task_id='spark_transformacao_dados_videos',
-        conn_id='spark',
-        application="/home/rodrigo/Documentos/projetos/analise_dados_youtube_segunda_versao/spark_etl/transform.py",
-        application_args=['--opcao', '2', '--caminho_arquivo',
-                          f'/home/rodrigo/Documentos/projetos/analise_dados_youtube_segunda_versao/datalake/bronze/*/{data}/estatisticas_videos/req_estatisticas_videos.json'],
-
-    )
+        )
 
 
 task_inicio >> tg1 >> tg2 >> tg3 >> transformacao_dados_canais >> transformacao_dados_videos >> task_fim
+
+# task_inicio >> transformacao_dados_canais >> transformacao_dados_videos >> task_fim
+
 
 # task_inicio >> tg2 >> task_fim
 # task_inicio >> transform_spark_submit >> task_fim

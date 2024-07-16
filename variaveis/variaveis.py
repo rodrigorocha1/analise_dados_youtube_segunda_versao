@@ -19,7 +19,7 @@ load_dotenv()
 
 
 lista_assunto = [
-    'Cities Skylines', 'Linux', 'Python Dados',  'Power BI', 'Elder Ring'
+    'Linux', 'Python Dados',  'Power BI', 'Elder Ring'
 ]
 
 
