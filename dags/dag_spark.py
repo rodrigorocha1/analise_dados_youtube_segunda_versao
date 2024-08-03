@@ -17,7 +17,7 @@ def obter_turno_pasta(hora: int) -> str:
         turno = 'madrugada'
     elif 6 <= hora < 12:
         turno = 'manha'
-    elif 12 <= hora < 18:
+    elif 12 <= hora <= 18:
         turno = 'tarde'
     else:
         turno = 'noite'
