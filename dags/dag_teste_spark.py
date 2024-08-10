@@ -8,13 +8,21 @@ with DAG(
     catchup=False,
     start_date=pendulum.datetime(2023, 9, 8, tz='America/Sao_Paulo')
 ) as dag:
-    teste_spark = SparkSubmitOperator(
-        task_id='spark',
+    transformacao_dados_canais = SparkSubmitOperator(
+        task_id='spark_transformacao_dados_canais',
         conn_id='spark',
         application="/home/rodrigo/Documentos/projetos/analise_dados_youtube_segunda_versao/spark_etl/transform.py",
-        application_args=['--opcao', '2', '--caminho_arquivo',
-                          '/home/rodrigo/Documentos/projetos/analise_dados_youtube_segunda_versao/datalake/bronze/*/extracao_data_2024_07_09_tarde/estatisticas_videos/req_estatisticas_videos.json'],
-        verbose=True,
+        application_args=['--opcao', 'C', '--caminho_arquivo',
+                          str(f'/home/rodrigo/Documentos/projetos/analise_dados_youtube_segunda_versao/datalake/bronze/*/*/estatisticas_canais_brasileiros/req_estatisticas_canais_brasileiros.json')],
+
     )
 
-    teste_spark
+    transformacao_dados_videos = SparkSubmitOperator(
+        task_id='spark_transformacao_dados_videos',
+        conn_id='spark',
+        application="/home/rodrigo/Documentos/projetos/analise_dados_youtube_segunda_versao/spark_etl/transform.py",
+        application_args=['--opcao', 'V', '--caminho_arquivo',
+                          str(f'/home/rodrigo/Documentos/projetos/analise_dados_youtube_segunda_versao/datalake/bronze/*/*/estatisticas_videos/req_estatisticas_videos.json')],
+
+    )
+    transformacao_dados_canais >> transformacao_dados_videos

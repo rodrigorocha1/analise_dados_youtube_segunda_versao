@@ -60,6 +60,8 @@ def fazer_tratamento_video(dataframe: DataFrame) -> DataFrame:
         F.col('items.statistics.viewCount').alias('TOTAL_VISUALIZACOES'),
         F.col('items.statistics.likeCount').alias('TOTAL_LIKES'),
         F.col('items.statistics.favoriteCount').alias('TOTAL_FAVORITOS'),
+
+        F.col('items.statistics.commentCount').alias('TOTAL_COMENTARIOS')
     )
     dataframe = dataframe.withColumn('TOTAL_TAGS', F.when(
         F.size(dataframe.TAGS) <= 0, 0).otherwise(F.size(dataframe.TAGS)))
@@ -79,17 +81,17 @@ def salvar_dados_particionados(dataframe: DataFrame, caminho_completo: str, part
 if __name__ == "__main__":
     print('______iniciando______________')
     caminho_base = os.getcwd()
-    parser = argparse.ArgumentParser(
-        description='ETL YOUTUBE')
-    parser.add_argument('--opcao', type=str, required=True,
-                        help='Opcao para obter a métrica')
-    parser.add_argument('--caminho_arquivo', type=str, required=True,
-                        help='camihno do arquivo')
-    args = parser.parse_args()
-    caminho_arquivo = args.caminho_arquivo
-    opcao = args.opcao
-    # caminho_arquivo = '/home/rodrigo/Documentos/projetos/analise_dados_youtube_segunda_versao/datalake/bronze/*/extracao_data_2024_07_15_noite/estatisticas_canais_brasileiros/req_estatisticas_canais_brasileiros.json'
-    # opcao = 'C'
+    # parser = argparse.ArgumentParser(
+    #     description='ETL YOUTUBE')
+    # parser.add_argument('--opcao', type=str, required=True,
+    #                     help='Opcao para obter a métrica')
+    # parser.add_argument('--caminho_arquivo', type=str, required=True,
+    #                     help='camihno do arquivo')
+    # args = parser.parse_args()
+    # caminho_arquivo = args.caminho_arquivo
+    # opcao = args.opcao
+    caminho_arquivo = '/home/rodrigo/Documentos/projetos/analise_dados_youtube_segunda_versao/datalake/bronze/*/*/estatisticas_videos/req_estatisticas_videos.json'
+    opcao = 'V'
     spark = SparkSession.builder.appName("criar_dataframe").getOrCreate()
 
     dataframe = abrir_dataframe(

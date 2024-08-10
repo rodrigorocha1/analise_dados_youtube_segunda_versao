@@ -24,3 +24,23 @@ AND ID_VIDEO IN ('wlgI9eu4XoE')
 GROUP BY DIA_EXTRACAO
 ORDER BY DIA_EXTRACAO;
 
+
+
+Análise de palavras chaves dos vídeos
+
+
+SELECT TAGS
+FROM read_parquet('/home/rodrigo/Documentos/projetos/analise_dados_youtube_segunda_versao/datalake/ouro/estatisticas_videos/*/*/*/*/*/*/*/*.parquet')
+WHERE ASSUNTO='elder_ring';
+
+# Top 10 Análise engajamento
+
+# -  [(Número de Curtidas + Número de Comentários + Número de Compartilhamentos) / Número Total de Visualizações] * 100
+SELECT ID_VIDEO , (TOTAL_LIKES + )
+FROM read_parquet('/home/rodrigo/Documentos/projetos/analise_dados_youtube_segunda_versao/datalake/ouro/estatisticas_videos/*/*/*/*/*/*/*/*.parquet')
+WHERE ASSUNTO='elder_ring'
+AND ID_VIDEO IN ('wlgI9eu4XoE')
+order BY DATA_EXTRACAO;
+
+
+
